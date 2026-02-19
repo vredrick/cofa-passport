@@ -9,8 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        ocean: {
+          DEFAULT: '#1B4F72',
+          light: '#2471A3',
+          dark: '#154360',
+        },
+        gold: {
+          DEFAULT: '#C4952A',
+          light: '#D4AC2B',
+          dark: '#A67C22',
+        },
       },
     },
   },
