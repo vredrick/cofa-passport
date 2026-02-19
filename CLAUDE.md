@@ -18,6 +18,7 @@ All data processing happens entirely in the browser. No data is ever sent to a s
 - **PDF generation:** pdf-lib 1.17
 - **React:** 18.x (all client components, no server components)
 - **Linting:** ESLint with next/core-web-vitals and next/typescript
+- **Hosting:** GitHub Pages via GitHub Actions (static deploy)
 - **Testing:** None installed yet
 
 ## Commands
@@ -27,6 +28,9 @@ npm run dev       # Start development server (localhost:3000)
 npm run build     # Build static export to out/
 npm run lint      # Run ESLint
 npm run start     # Start production server (not typically used; app is static)
+
+# GitHub Pages build (sets basePath to /cofa-passport)
+GITHUB_PAGES=true npm run build
 ```
 
 ## Project Structure
@@ -34,7 +38,9 @@ npm run start     # Start production server (not typically used; app is static)
 ```
 cofa-passport/
 ├── CLAUDE.md                 # This file
-├── next.config.mjs           # Next.js config: static export, unoptimized images
+├── .github/workflows/
+│   └── deploy.yml            # GitHub Actions: build + deploy to GitHub Pages
+├── next.config.mjs           # Next.js config: static export, basePath for GitHub Pages
 ├── tailwind.config.ts        # Custom colors, fonts, shadows, borderWidth
 ├── tsconfig.json             # Strict mode, path alias @/* -> src/*
 ├── .eslintrc.json            # next/core-web-vitals + next/typescript
@@ -54,8 +60,8 @@ cofa-passport/
 │   ├── components/
 │   │   ├── LandingPage.tsx   # Nation selector: hero, passport cover cards, FSM actions
 │   │   ├── DetailsModal.tsx  # FSM passport info modal (requirements, fees, offices)
-│   │   ├── Sidebar.tsx       # Desktop sidebar nav (w-80) + mobile drawer + back-to-home link
-│   │   ├── MobileHeader.tsx  # Sticky mobile header with hamburger toggle + back arrow + step badge
+│   │   ├── Sidebar.tsx       # Desktop sidebar nav (w-80) + right-side mobile drawer (step tracking only)
+│   │   ├── MobileHeader.tsx  # Sticky mobile header: back arrow (left), title, step badge + hamburger (right)
 │   │   ├── PrivacyNotice.tsx # Dismissible privacy banner with Material Symbol icon
 │   │   ├── Wizard.tsx        # Form state manager, step renderer (nav state lifted to page.tsx)
 │   │   ├── steps/
@@ -86,6 +92,7 @@ cofa-passport/
 - **Fully client-side:** Every component uses `'use client'`. There are no server components, no API routes, and no server-side data fetching. The build output (`out/`) is a set of static HTML/JS/CSS files.
 - **Privacy-first:** The PDF template is fetched from `public/`, filled in-browser with pdf-lib, and downloaded/shared directly. Nothing touches a server.
 - **Static export:** `next.config.mjs` sets `output: 'export'` and `images: { unoptimized: true }`. The app can be hosted on any static file server (S3, GitHub Pages, Netlify, etc.).
+- **GitHub Pages deploy:** When `GITHUB_PAGES=true` is set, `next.config.mjs` adds `basePath: '/cofa-passport'` and `assetPrefix: '/cofa-passport/'`. The `NEXT_PUBLIC_BASE_PATH` env var is exposed so runtime asset fetches (PDF template, passport images) use the correct subpath. The GitHub Actions workflow in `.github/workflows/deploy.yml` handles build and deploy automatically on push to `main`.
 
 ### View Architecture
 
@@ -94,14 +101,14 @@ cofa-passport/
 - **Landing view (`'landing'`):** Renders `<LandingPage>` — a full-page nation selector with passport cover images, FSM action buttons, and a details modal. RMI and Palau cards appear dimmed with "Coming Soon" badges.
 - **Wizard view (`'wizard'`):** Renders the existing Sidebar + MobileHeader + Wizard layout for FSM Form 500B.
 
-Clicking "Passport Renewal" or "Start Application" in the landing page/modal sets view to `'wizard'`. The Sidebar and MobileHeader each accept an optional `onBackToLanding` prop that returns the user to the landing view.
+Clicking "Passport Renewal" or "Start Application" in the landing page/modal sets view to `'wizard'`. The Sidebar (desktop only) and MobileHeader each accept an optional `onBackToLanding` prop that returns the user to the landing view. On mobile, the back arrow in the MobileHeader handles navigation home; the mobile drawer is purely for step tracking.
 
 ### Layout Architecture
 
 The wizard view uses a sidebar + content layout:
 
 - **Desktop (lg+):** Fixed sidebar (`w-80`) on the left with vertical step navigation; main content area centered at `max-w-[800px]`.
-- **Mobile (<lg):** Sticky `MobileHeader` with hamburger menu; sidebar slides in as a drawer overlay.
+- **Mobile (<lg):** Sticky `MobileHeader` with back arrow (left) and hamburger menu (right); drawer slides in from the right as a step-tracking overlay. The `slide-in-right` animation is defined in `globals.css`.
 - **Navigation state** (`currentStep`, `completedSteps`, `goToStep`, `markCompleteAndAdvance`) lives in `page.tsx` and is passed as props to both `Sidebar` and `Wizard`.
 
 The sidebar maps 5 internal wizard steps to 4 visual items:
@@ -255,12 +262,13 @@ Chrome's built-in PDF viewer ignores checkbox form field appearance streams enti
 
 Custom values added to `borderWidth` in `tailwind.config.ts` (e.g., `'3': '3px'`) do **not** resolve when used via `@apply` in CSS files under Tailwind CSS 3.4. Use arbitrary values (`border-[3px]`) instead. This applies to all custom theme extensions used inside `@apply`.
 
-### Static Export Constraints
+### Static Export & GitHub Pages Constraints
 
 - No `getServerSideProps`, `getStaticProps`, or API routes
 - No `next/image` optimization (images are unoptimized)
 - The PDF template must be in `public/` and is fetched at runtime via `fetch()`
 - All routing is client-side; there is one page (`/`) with a view state toggle (landing vs wizard)
+- **BasePath handling:** When deployed to GitHub Pages, all assets live under `/cofa-passport/`. Next.js handles `basePath` for JS/CSS bundles and `<Link>` components automatically. For raw `<img>` tags and `fetch()` calls to `public/` files, you must prefix with `process.env.NEXT_PUBLIC_BASE_PATH` (see `LandingPage.tsx` and `pdf-filler.ts` for examples). Locally this env var is empty, so paths resolve to `/` as usual.
 
 ### Share API
 
@@ -282,11 +290,13 @@ This is a small project with a flat structure. The key files to understand are:
 | `src/components/LandingPage.tsx` | Nation selector — passport cover cards, hero, FSM actions |
 | `src/components/DetailsModal.tsx` | FSM passport info modal — requirements, fees, processing, offices |
 | `src/components/Wizard.tsx` | Form state hub — owns all form data, renders current step |
-| `src/components/Sidebar.tsx` | Desktop sidebar + mobile drawer — step nav + back-to-home link |
-| `src/components/MobileHeader.tsx` | Mobile sticky header — hamburger toggle + back arrow + step indicator |
+| `src/components/Sidebar.tsx` | Desktop sidebar + right-side mobile drawer — step nav only on mobile |
+| `src/components/MobileHeader.tsx` | Mobile sticky header — back arrow (left), hamburger + step badge (right) |
 | `src/lib/pdf-filler.ts` | PDF generation logic — the core value of the app |
 | `src/lib/field-mapping.ts` | PDF field IDs — map between form data and PDF template fields |
 | `src/lib/validation.ts` | Validation rules — defines what is required and format constraints |
 | `src/components/steps/` | Individual wizard steps — the UI for data entry |
 | `src/components/ui/` | Reusable form components — shared across all steps |
-| `src/app/globals.css` | Tailwind component classes — defines btn-primary, card, card-hard, etc. |
+| `src/app/globals.css` | Tailwind component classes + slide-in-right animation |
+| `next.config.mjs` | Static export config + GitHub Pages basePath/assetPrefix |
+| `.github/workflows/deploy.yml` | GitHub Actions workflow — auto-deploys to GitHub Pages on push to main |

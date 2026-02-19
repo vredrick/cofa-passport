@@ -21,11 +21,10 @@ function NationCard({
 
   return (
     <div
-      className={`group relative flex flex-col rounded-2xl overflow-hidden transition-all ${
-        isAvailable
-          ? 'border-[3px] border-ocean shadow-hard bg-white'
-          : 'border-[3px] border-ocean/15 bg-white'
-      }`}
+      className={`group relative flex flex-col rounded-2xl overflow-hidden transition-all ${isAvailable
+        ? 'border-[3px] border-ocean shadow-hard bg-white'
+        : 'border-[3px] border-ocean/15 bg-white'
+        }`}
     >
       {/* Coming Soon badge */}
       {!isAvailable && (
@@ -41,9 +40,8 @@ function NationCard({
           <img
             src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}${nation.passportImage}`}
             alt={`${nation.fullName} passport`}
-            className={`w-full max-w-[200px] h-auto rounded-md transition-transform duration-300 ${
-              isAvailable ? 'drop-shadow-[0_8px_24px_rgba(27,79,114,0.3)] group-hover:scale-[1.03]' : 'drop-shadow-[0_4px_12px_rgba(0,0,0,0.1)]'
-            }`}
+            className={`w-full max-w-[200px] h-auto rounded-md transition-transform duration-300 ${isAvailable ? 'drop-shadow-[0_8px_24px_rgba(27,79,114,0.3)] group-hover:scale-[1.03]' : 'drop-shadow-[0_4px_12px_rgba(0,0,0,0.1)]'
+              }`}
           />
         </div>
       </div>
@@ -146,14 +144,15 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
 
       {/* Nation cards */}
       <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-16 w-full flex-1">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4 scrollbar-hide sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 sm:pb-0">
           {NATIONS.map((nation) => (
-            <NationCard
-              key={nation.id}
-              nation={nation}
-              onStartApplication={onStartApplication}
-              onShowDetails={() => setDetailsOpen(true)}
-            />
+            <div key={nation.id} className="min-w-[280px] max-w-[300px] flex-shrink-0 snap-center sm:min-w-0 sm:max-w-none sm:flex-shrink">
+              <NationCard
+                nation={nation}
+                onStartApplication={onStartApplication}
+                onShowDetails={() => setDetailsOpen(true)}
+              />
+            </div>
           ))}
         </div>
       </div>
