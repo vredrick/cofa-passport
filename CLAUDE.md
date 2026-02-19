@@ -40,19 +40,22 @@ cofa-passport/
 ├── .eslintrc.json            # next/core-web-vitals + next/typescript
 ├── package.json              # Dependencies and scripts
 ├── public/
-│   └── AmendedPassportApplication0001.pdf  # FSM Form 500B PDF template
+│   ├── AmendedPassportApplication0001.pdf  # FSM Form 500B PDF template
+│   ├── passport-fsm.webp     # FSM passport cover image (landing page)
+│   ├── passport-rmi.png      # RMI passport cover image (landing page)
+│   └── passport-palau.png    # Palau passport cover image (landing page)
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx        # Root layout (Public Sans font, Material Symbols link, metadata)
-│   │   ├── page.tsx          # Home page: navigation state, Sidebar + MobileHeader + Wizard layout
+│   │   ├── page.tsx          # Home page: view toggle (landing/wizard), navigation state
 │   │   ├── globals.css       # Tailwind directives + component classes (btn, card, form-input, etc.)
 │   │   ├── favicon.ico
 │   │   └── fonts/            # Geist font files (woff, legacy — not currently used)
 │   ├── components/
-│   │   ├── Sidebar.tsx       # Desktop sidebar nav (w-80) + mobile drawer with step indicators
-│   │   ├── MobileHeader.tsx  # Sticky mobile header with hamburger toggle + step badge
-│   │   ├── Header.tsx        # (Legacy) Original app header — no longer imported
-│   │   ├── ProgressBar.tsx   # (Legacy) Original horizontal progress bar — no longer imported
+│   │   ├── LandingPage.tsx   # Nation selector: hero, passport cover cards, FSM actions
+│   │   ├── DetailsModal.tsx  # FSM passport info modal (requirements, fees, offices)
+│   │   ├── Sidebar.tsx       # Desktop sidebar nav (w-80) + mobile drawer + back-to-home link
+│   │   ├── MobileHeader.tsx  # Sticky mobile header with hamburger toggle + back arrow + step badge
 │   │   ├── PrivacyNotice.tsx # Dismissible privacy banner with Material Symbol icon
 │   │   ├── Wizard.tsx        # Form state manager, step renderer (nav state lifted to page.tsx)
 │   │   ├── steps/
@@ -66,6 +69,8 @@ cofa-passport/
 │   │       ├── DateInput.tsx  # MM/DD/YYYY auto-formatting input
 │   │       ├── RadioGroup.tsx # Stacked (with shadow) or inline radio button group
 │   │       └── YesNoToggle.tsx # Two-button yes/no selector (TriState), 56px height
+│   ├── data/
+│   │   └── nations.ts        # COFA nation definitions, FSM passport info (fees, offices, etc.)
 │   ├── lib/
 │   │   ├── pdf-filler.ts     # PDF generation: fill template + draw checkmarks + read-only flatten
 │   │   ├── field-mapping.ts  # AcroForm field IDs extracted from template
@@ -82,9 +87,18 @@ cofa-passport/
 - **Privacy-first:** The PDF template is fetched from `public/`, filled in-browser with pdf-lib, and downloaded/shared directly. Nothing touches a server.
 - **Static export:** `next.config.mjs` sets `output: 'export'` and `images: { unoptimized: true }`. The app can be hosted on any static file server (S3, GitHub Pages, Netlify, etc.).
 
+### View Architecture
+
+`page.tsx` manages a `view` state (`'landing' | 'wizard'`) to toggle between two top-level views without route changes:
+
+- **Landing view (`'landing'`):** Renders `<LandingPage>` — a full-page nation selector with passport cover images, FSM action buttons, and a details modal. RMI and Palau cards appear dimmed with "Coming Soon" badges.
+- **Wizard view (`'wizard'`):** Renders the existing Sidebar + MobileHeader + Wizard layout for FSM Form 500B.
+
+Clicking "Passport Renewal" or "Start Application" in the landing page/modal sets view to `'wizard'`. The Sidebar and MobileHeader each accept an optional `onBackToLanding` prop that returns the user to the landing view.
+
 ### Layout Architecture
 
-The app uses a sidebar + content layout:
+The wizard view uses a sidebar + content layout:
 
 - **Desktop (lg+):** Fixed sidebar (`w-80`) on the left with vertical step navigation; main content area centered at `max-w-[800px]`.
 - **Mobile (<lg):** Sticky `MobileHeader` with hamburger menu; sidebar slides in as a drawer overlay.
@@ -212,11 +226,13 @@ Defined in `tailwind.config.ts`:
 
 When adding RMI or Palau support:
 
-1. Add a new PDF template to `public/`
-2. Create a new field mapping file (or extend `field-mapping.ts` with nation-specific sections)
-3. The form data model may need new types if the other nation's form has different fields
-4. The wizard steps may need conditional sections or entirely new step components
-5. Add a nation selector as the first step (before passport type)
+1. Update the nation's `status` from `'coming-soon'` to `'available'` in `src/data/nations.ts`
+2. Add a new PDF template to `public/`
+3. Create a new field mapping file (or extend `field-mapping.ts` with nation-specific sections)
+4. Add a passport info object (like `FSM_PASSPORT_INFO`) to `src/data/nations.ts` for the details modal
+5. The form data model may need new types if the other nation's form has different fields
+6. The wizard steps may need conditional sections or entirely new step components
+7. The landing page `NationCard` will automatically show action buttons once status is `'available'`
 
 ## Important Gotchas
 
@@ -244,7 +260,7 @@ Custom values added to `borderWidth` in `tailwind.config.ts` (e.g., `'3': '3px'`
 - No `getServerSideProps`, `getStaticProps`, or API routes
 - No `next/image` optimization (images are unoptimized)
 - The PDF template must be in `public/` and is fetched at runtime via `fetch()`
-- All routing is client-side; there is currently only one page (`/`)
+- All routing is client-side; there is one page (`/`) with a view state toggle (landing vs wizard)
 
 ### Share API
 
@@ -261,10 +277,13 @@ This is a small project with a flat structure. The key files to understand are:
 | File | Purpose |
 |------|---------|
 | `src/types/form.ts` | All types and initial data — start here to understand the data model |
-| `src/app/page.tsx` | Layout + navigation state — owns step navigation, sidebar, mobile header |
+| `src/data/nations.ts` | COFA nation definitions + FSM passport info (fees, offices, requirements) |
+| `src/app/page.tsx` | View toggle (landing/wizard) + navigation state |
+| `src/components/LandingPage.tsx` | Nation selector — passport cover cards, hero, FSM actions |
+| `src/components/DetailsModal.tsx` | FSM passport info modal — requirements, fees, processing, offices |
 | `src/components/Wizard.tsx` | Form state hub — owns all form data, renders current step |
-| `src/components/Sidebar.tsx` | Desktop sidebar + mobile drawer — step navigation UI |
-| `src/components/MobileHeader.tsx` | Mobile sticky header — hamburger toggle + step indicator |
+| `src/components/Sidebar.tsx` | Desktop sidebar + mobile drawer — step nav + back-to-home link |
+| `src/components/MobileHeader.tsx` | Mobile sticky header — hamburger toggle + back arrow + step indicator |
 | `src/lib/pdf-filler.ts` | PDF generation logic — the core value of the app |
 | `src/lib/field-mapping.ts` | PDF field IDs — map between form data and PDF template fields |
 | `src/lib/validation.ts` | Validation rules — defines what is required and format constraints |

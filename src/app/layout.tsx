@@ -5,8 +5,8 @@ import './globals.css';
 const publicSans = Public_Sans({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'FSM Passport Application — Form 500B',
-  description: 'Digital assistant for completing the Federated States of Micronesia passport application form.',
+  title: 'COFA Passport Services',
+  description: 'Digital passport application assistant for COFA nations — FSM, RMI, and Palau. Complete forms, generate pre-filled PDFs, and print for submission.',
 };
 
 export const viewport: Viewport = {

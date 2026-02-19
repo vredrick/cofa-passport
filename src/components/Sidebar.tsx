@@ -6,6 +6,7 @@ interface SidebarProps {
   onStepClick: (step: number) => void;
   mobileOpen: boolean;
   onMobileClose: () => void;
+  onBackToLanding?: () => void;
 }
 
 const SIDEBAR_STEPS = [
@@ -21,6 +22,7 @@ export default function Sidebar({
   onStepClick,
   mobileOpen,
   onMobileClose,
+  onBackToLanding,
 }: SidebarProps) {
   const isActive = (steps: number[]) => steps.includes(currentStep);
   const isCompleted = (steps: number[]) => steps.every((s) => completedSteps.has(s));
@@ -48,6 +50,19 @@ export default function Sidebar({
             <p className="text-xs text-muted">Form 500B</p>
           </div>
         </div>
+        {onBackToLanding && (
+          <button
+            type="button"
+            onClick={() => {
+              onBackToLanding();
+              onMobileClose();
+            }}
+            className="flex items-center gap-1 mt-3 text-sm font-semibold text-ocean hover:text-ocean-light transition-colors"
+          >
+            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            Back to Home
+          </button>
+        )}
       </div>
 
       {/* Step Navigation */}
