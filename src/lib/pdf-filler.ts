@@ -162,10 +162,12 @@ export async function fillPassportPdf(data: FormData): Promise<Uint8Array> {
   // Bake text fields into the page as static content
   form.updateFieldAppearances();
 
-  // Strip the AcroForm to produce a fully static PDF — no interactive fields.
-  // (form.flatten() can't be used here due to orphaned widget refs in the template.)
-  const catalog = pdfDoc.context.lookup(pdfDoc.context.trailerInfo.Root);
-  (catalog as any).delete(PDFName.of('AcroForm'));
+  // Make all fields read-only so the PDF is non-editable but text remains visible.
+  // (form.flatten() crashes on this template due to orphaned widget refs, and
+  // stripping the AcroForm removes font references that text appearance streams need.)
+  for (const field of form.getFields()) {
+    field.enableReadOnly();
+  }
 
   return pdfDoc.save();
 }

@@ -12,15 +12,15 @@ interface YesNoToggleProps {
 export default function YesNoToggle({ label, value, onChange, error }: YesNoToggleProps) {
   return (
     <div>
-      <p className="block text-sm font-medium text-gray-700 mb-2">{label}</p>
+      <p className="block text-lg font-bold text-ink mb-2">{label}</p>
       <div className="flex gap-3">
         <button
           type="button"
           onClick={() => onChange(value === 'yes' ? '' : 'yes')}
-          className={`flex-1 py-2.5 rounded-lg border-2 font-medium text-sm transition-colors ${
+          className={`flex-1 h-[56px] rounded-lg border-[3px] font-bold text-base transition-colors focus:outline-none focus:ring-4 focus:ring-gold-focus ${
             value === 'yes'
               ? 'border-ocean bg-ocean text-white'
-              : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+              : 'border-gray-300 bg-white text-ink hover:border-ocean/50'
           }`}
         >
           Yes
@@ -28,10 +28,10 @@ export default function YesNoToggle({ label, value, onChange, error }: YesNoTogg
         <button
           type="button"
           onClick={() => onChange(value === 'no' ? '' : 'no')}
-          className={`flex-1 py-2.5 rounded-lg border-2 font-medium text-sm transition-colors ${
+          className={`flex-1 h-[56px] rounded-lg border-[3px] font-bold text-base transition-colors focus:outline-none focus:ring-4 focus:ring-gold-focus ${
             value === 'no'
               ? 'border-ocean bg-ocean text-white'
-              : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+              : 'border-gray-300 bg-white text-ink hover:border-ocean/50'
           }`}
         >
           No

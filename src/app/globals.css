@@ -4,39 +4,45 @@
 
 @layer components {
   .btn-primary {
-    @apply w-full py-3 px-6 bg-ocean text-white font-semibold rounded-lg
-      hover:bg-ocean-light active:bg-ocean-dark transition-colors
+    @apply w-full h-14 px-6 bg-ocean text-white font-bold text-lg rounded-lg border-[3px] border-ocean
+      hover:bg-ocean-light hover:border-ocean-light active:bg-ocean-dark active:border-ocean-dark
+      transition-colors focus:outline-none focus:ring-4 focus:ring-gold-focus
       disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply w-full py-3 px-6 border-2 border-ocean text-ocean font-semibold rounded-lg
-      hover:bg-ocean hover:text-white active:bg-ocean-dark transition-colors;
+    @apply w-full h-14 px-6 border-[3px] border-ocean text-ocean font-bold text-lg rounded-lg
+      hover:bg-ocean hover:text-white active:bg-ocean-dark active:text-white
+      transition-colors focus:outline-none focus:ring-4 focus:ring-gold-focus;
   }
 
   .form-input {
-    @apply w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900
-      focus:outline-none focus:ring-2 focus:ring-ocean focus:border-transparent
-      placeholder:text-gray-400 text-base;
+    @apply w-full h-[56px] px-4 py-3 bg-surface border-[3px] border-ocean rounded-lg text-ink text-lg
+      focus:outline-none focus:ring-4 focus:ring-gold-focus focus:border-ocean
+      placeholder:text-muted/60;
   }
 
   .form-input-error {
-    @apply border-red-500 focus:ring-red-500;
+    @apply border-error focus:ring-error/30;
   }
 
   .card {
-    @apply bg-white rounded-xl border border-gray-200 p-4 space-y-4;
+    @apply bg-white rounded-xl border-[3px] border-ocean/10 p-6 space-y-5;
   }
 
   .card-title {
-    @apply text-sm font-semibold text-ocean uppercase tracking-wide;
+    @apply text-lg font-bold text-ocean uppercase tracking-wide;
+  }
+
+  .card-hard {
+    @apply bg-white rounded-xl border-[3px] border-ocean p-6 space-y-5 shadow-hard;
   }
 
   .error-text {
-    @apply text-red-600 text-xs mt-1;
+    @apply text-error text-sm font-medium mt-1;
   }
 }
 
 body {
-  @apply bg-gray-50 text-gray-900 antialiased;
+  @apply bg-surface text-ink antialiased;
 }

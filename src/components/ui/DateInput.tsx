@@ -20,9 +20,9 @@ export default function DateInput({ label, value, onChange, error, required }: D
 
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+      <label htmlFor={id} className="block text-lg font-bold text-ink mb-1">
         {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
+        {required && <span className="text-error ml-0.5">*</span>}
       </label>
       <input
         id={id}

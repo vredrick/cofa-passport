@@ -12,7 +12,9 @@ All data processing happens entirely in the browser. No data is ever sent to a s
 
 - **Framework:** Next.js 14.2 with App Router, static export (`output: 'export'`)
 - **Language:** TypeScript (strict mode)
-- **Styling:** Tailwind CSS 3.4 with custom theme colors (`ocean`, `gold`)
+- **Styling:** Tailwind CSS 3.4 with custom theme colors (`ocean`, `gold`, `surface`, `ink`, `muted`, `error`)
+- **Font:** Public Sans (via `next/font/google`)
+- **Icons:** Material Symbols Outlined (loaded via `<link>` in layout)
 - **PDF generation:** pdf-lib 1.17
 - **React:** 18.x (all client components, no server components)
 - **Linting:** ESLint with next/core-web-vitals and next/typescript
@@ -33,7 +35,7 @@ npm run start     # Start production server (not typically used; app is static)
 cofa-passport/
 ├── CLAUDE.md                 # This file
 ├── next.config.mjs           # Next.js config: static export, unoptimized images
-├── tailwind.config.ts        # Custom colors: ocean (blue), gold (yellow)
+├── tailwind.config.ts        # Custom colors, fonts, shadows, borderWidth
 ├── tsconfig.json             # Strict mode, path alias @/* -> src/*
 ├── .eslintrc.json            # next/core-web-vitals + next/typescript
 ├── package.json              # Dependencies and scripts
@@ -41,29 +43,31 @@ cofa-passport/
 │   └── AmendedPassportApplication0001.pdf  # FSM Form 500B PDF template
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx        # Root layout (Inter font, metadata)
-│   │   ├── page.tsx          # Home page: Header + PrivacyNotice + Wizard
-│   │   ├── globals.css       # Tailwind directives + component classes
+│   │   ├── layout.tsx        # Root layout (Public Sans font, Material Symbols link, metadata)
+│   │   ├── page.tsx          # Home page: navigation state, Sidebar + MobileHeader + Wizard layout
+│   │   ├── globals.css       # Tailwind directives + component classes (btn, card, form-input, etc.)
 │   │   ├── favicon.ico
-│   │   └── fonts/            # Geist font files (woff)
+│   │   └── fonts/            # Geist font files (woff, legacy — not currently used)
 │   ├── components/
-│   │   ├── Header.tsx        # App header with FSM star motif SVG
-│   │   ├── PrivacyNotice.tsx # Dismissible privacy banner
-│   │   ├── ProgressBar.tsx   # 5-step progress indicator
-│   │   ├── Wizard.tsx        # Form state manager, step orchestrator
+│   │   ├── Sidebar.tsx       # Desktop sidebar nav (w-80) + mobile drawer with step indicators
+│   │   ├── MobileHeader.tsx  # Sticky mobile header with hamburger toggle + step badge
+│   │   ├── Header.tsx        # (Legacy) Original app header — no longer imported
+│   │   ├── ProgressBar.tsx   # (Legacy) Original horizontal progress bar — no longer imported
+│   │   ├── PrivacyNotice.tsx # Dismissible privacy banner with Material Symbol icon
+│   │   ├── Wizard.tsx        # Form state manager, step renderer (nav state lifted to page.tsx)
 │   │   ├── steps/
-│   │   │   ├── PassportTypeStep.tsx   # Step 0: Passport type selection
-│   │   │   ├── ApplicantInfoStep.tsx  # Step 1: All applicant fields
+│   │   │   ├── PassportTypeStep.tsx   # Step 0: Card grid with Material Symbol icons
+│   │   │   ├── ApplicantInfoStep.tsx  # Step 1: All applicant fields with section separators
 │   │   │   ├── ParentInfoStep.tsx     # Steps 2-3: Reused for father/mother
-│   │   │   └── ReviewStep.tsx         # Step 4: Summary + PDF generation
+│   │   │   └── ReviewStep.tsx         # Step 4: Brutalist card summary + PDF generate/download/share
 │   │   └── ui/
 │   │       ├── index.ts       # Barrel export for all UI components
-│   │       ├── TextInput.tsx  # Text input with auto-uppercase, error display
+│   │       ├── TextInput.tsx  # Text input with auto-uppercase, 56px height, bold labels
 │   │       ├── DateInput.tsx  # MM/DD/YYYY auto-formatting input
-│   │       ├── RadioGroup.tsx # Stacked or inline radio button group
-│   │       └── YesNoToggle.tsx # Two-button yes/no selector (TriState)
+│   │       ├── RadioGroup.tsx # Stacked (with shadow) or inline radio button group
+│   │       └── YesNoToggle.tsx # Two-button yes/no selector (TriState), 56px height
 │   ├── lib/
-│   │   ├── pdf-filler.ts     # PDF generation: fill template + draw checkmarks
+│   │   ├── pdf-filler.ts     # PDF generation: fill template + draw checkmarks + read-only flatten
 │   │   ├── field-mapping.ts  # AcroForm field IDs extracted from template
 │   │   └── validation.ts     # Per-step validation + date formatting helper
 │   └── types/
@@ -78,6 +82,22 @@ cofa-passport/
 - **Privacy-first:** The PDF template is fetched from `public/`, filled in-browser with pdf-lib, and downloaded/shared directly. Nothing touches a server.
 - **Static export:** `next.config.mjs` sets `output: 'export'` and `images: { unoptimized: true }`. The app can be hosted on any static file server (S3, GitHub Pages, Netlify, etc.).
 
+### Layout Architecture
+
+The app uses a sidebar + content layout:
+
+- **Desktop (lg+):** Fixed sidebar (`w-80`) on the left with vertical step navigation; main content area centered at `max-w-[800px]`.
+- **Mobile (<lg):** Sticky `MobileHeader` with hamburger menu; sidebar slides in as a drawer overlay.
+- **Navigation state** (`currentStep`, `completedSteps`, `goToStep`, `markCompleteAndAdvance`) lives in `page.tsx` and is passed as props to both `Sidebar` and `Wizard`.
+
+The sidebar maps 5 internal wizard steps to 4 visual items:
+| Sidebar Item    | Internal Steps | Active When   | Completed When       |
+|-----------------|---------------|---------------|----------------------|
+| Passport Type   | 0             | step === 0    | step 0 completed     |
+| Your Details    | 1             | step === 1    | step 1 completed     |
+| Parental Info   | 2, 3          | step 2 or 3   | both 2 and 3 done    |
+| Review & Print  | 4             | step === 4    | step 4 completed     |
+
 ### Wizard Flow
 
 The wizard has 5 steps (indexed 0-4), defined in `STEP_LABELS` in `src/types/form.ts`:
@@ -90,7 +110,7 @@ The wizard has 5 steps (indexed 0-4), defined in `STEP_LABELS` in `src/types/for
 | 3    | Mother    | ParentInfoStep       | Mother's info (same component)     |
 | 4    | Review    | ReviewStep           | Summary, PDF generate/download/share |
 
-`Wizard.tsx` owns all form state via `useState<FormData>`. It passes data and updater callbacks down as props to each step. There is no context provider or state management library.
+`Wizard.tsx` owns all form data state via `useState<FormData>`. Navigation state is owned by `page.tsx` and passed in as props. There is no context provider or state management library.
 
 ### Form Data Model
 
@@ -133,8 +153,8 @@ Date format: `MM/DD/YYYY`. The `formatDateInput()` helper auto-inserts slashes a
 2. Opens it with `PDFDocument.load()`
 3. Fills text fields via `form.getTextField(id).setText(value)`
 4. Draws checkbox marks as vector lines directly on the page (two lines forming a checkmark)
-5. Calls `form.updateFieldAppearances()` to bake text into the page
-6. Strips the AcroForm dictionary from the PDF catalog to produce a flat, non-editable PDF
+5. Calls `form.updateFieldAppearances()` to bake text into appearance streams
+6. Sets all fields to read-only via `field.enableReadOnly()` to produce a non-editable PDF
 7. Returns `Uint8Array` of the final PDF bytes
 
 Field IDs are defined in `src/lib/field-mapping.ts` as the `FIELD_IDS` constant. These IDs were extracted from the template's AcroForm dictionary and look like `text_4dr`, `checkbox_57vsoy`, etc.
@@ -147,7 +167,8 @@ Field IDs are defined in `src/lib/field-mapping.ts` as the `FIELD_IDS` constant.
 - **Path alias:** Use `@/*` to import from `src/*`. Example: `import { TextInput } from '@/components/ui'`.
 - **UI barrel export:** All `src/components/ui/` components are re-exported from `src/components/ui/index.ts`. Import from the barrel, not individual files.
 - **TextInput auto-uppercase:** The `TextInput` component uppercases input by default (`uppercase={true}`). Pass `uppercase={false}` for email and phone fields.
-- **Tailwind component classes:** Reusable utility classes are defined in `src/app/globals.css` under `@layer components`: `btn-primary`, `btn-secondary`, `form-input`, `form-input-error`, `card`, `card-title`, `error-text`. Use these instead of repeating Tailwind utilities.
+- **Tailwind component classes:** Reusable utility classes are defined in `src/app/globals.css` under `@layer components`: `btn-primary`, `btn-secondary`, `form-input`, `form-input-error`, `card`, `card-hard`, `card-title`, `error-text`. Use these instead of repeating Tailwind utilities.
+- **Arbitrary border width:** Use `border-[3px]` instead of extending Tailwind's `borderWidth` config — custom `borderWidth` values don't resolve inside `@apply` directives in Tailwind CSS 3.4.
 
 ### Theme Colors
 
@@ -155,12 +176,27 @@ Defined in `tailwind.config.ts`:
 
 | Token          | Hex       | Usage                          |
 |----------------|-----------|--------------------------------|
-| `ocean`        | `#1B4F72` | Primary blue (buttons, headers)|
+| `ocean`        | `#1B4F72` | Primary blue (buttons, headers, borders) |
 | `ocean-light`  | `#2471A3` | Hover state                    |
 | `ocean-dark`   | `#154360` | Active/pressed state           |
-| `gold`         | `#C4952A` | Accent (planned, not yet used) |
+| `gold`         | `#C4952A` | Accent                         |
 | `gold-light`   | `#D4AC2B` | Accent variant                 |
 | `gold-dark`    | `#A67C22` | Accent variant                 |
+| `gold-focus`   | `#FFD700` | Focus ring color (accessibility) |
+| `surface`      | `#F0F4F8` | Page background, input backgrounds |
+| `ink`          | `#102A43` | Primary text color             |
+| `muted`        | `#486581` | Secondary text, labels         |
+| `error`        | `#D64545` | Error states, required asterisks |
+
+### Design System
+
+- **Input height:** 56px (`h-[56px]`) with 3px blue borders, light blue-gray backgrounds
+- **Button height:** 56px (`h-14`) with 3px borders
+- **Typography:** Bold labels (`text-lg font-bold`), large headings (`text-4xl font-bold tracking-tight`)
+- **Cards:** `.card` for standard sections, `.card-hard` for brutalist shadow (`4px 4px 0 #1B4F72`)
+- **Focus rings:** Gold (`focus:ring-4 focus:ring-gold-focus`) for accessibility
+- **Icons:** Material Symbols Outlined, referenced as `<span className="material-symbols-outlined">icon_name</span>`
+- **Shadows:** `shadow-hard` (4px 4px 0 #1B4F72), `shadow-hard-sm` (2px 2px 0 #1B4F72)
 
 ### Adding New Form Fields
 
@@ -187,11 +223,20 @@ When adding RMI or Palau support:
 
 Chrome's built-in PDF viewer ignores checkbox form field appearance streams entirely. Setting a checkbox via `cb.check()` produces a check that appears in Adobe Reader and Mac Preview but is invisible in Chrome. The workaround is to draw checkmark lines directly on the page using `page.drawLine()` at the widget rectangle coordinates. The `checkBox()` helper in `pdf-filler.ts` implements this.
 
+### PDF Flattening
+
+- **`form.flatten()` crashes:** Calling `form.flatten()` on this template throws `Could not find page for PDFRef 471 0 R` due to orphaned widget references.
+- **Stripping AcroForm loses text:** Deleting the AcroForm dictionary (`catalog.delete(PDFName.of('AcroForm'))`) removes font references needed by text field appearance streams, causing all text to disappear in downloaded PDFs while checkmarks (drawn as vector lines) survive.
+- **Current approach:** All fields are set to read-only via `field.enableReadOnly()`. This preserves text rendering while preventing editing.
+
 ### PDF Template Quirks
 
 - **Checkbox on-value:** The template uses `Yes_nlga` as the checkbox on-value, not the standard `Yes`. This is why `cb.check()` alone does not work correctly and the vector drawing approach is used instead.
 - **Checkbox widget size:** Checkbox rectangles in the template are very small (5-7 points). The checkmark line drawing uses proportional coordinates (15%-85% of the widget rect) to fit properly.
-- **`form.flatten()` crashes:** Calling `form.flatten()` on this template throws `Could not find page for PDFRef 471 0 R` due to orphaned widget references. The workaround is to delete the AcroForm entry from the PDF catalog directly: `catalog.delete(PDFName.of('AcroForm'))`. This effectively flattens the form by removing all interactive field definitions while the rendered text/lines remain.
+
+### Tailwind @apply Limitations
+
+Custom values added to `borderWidth` in `tailwind.config.ts` (e.g., `'3': '3px'`) do **not** resolve when used via `@apply` in CSS files under Tailwind CSS 3.4. Use arbitrary values (`border-[3px]`) instead. This applies to all custom theme extensions used inside `@apply`.
 
 ### Static Export Constraints
 
@@ -202,7 +247,7 @@ Chrome's built-in PDF viewer ignores checkbox form field appearance streams enti
 
 ### Share API
 
-`ReviewStep.tsx` checks for `navigator.canShare()` support and conditionally shows a "Share PDF" button. This uses the Web Share API Level 2 (file sharing), which is supported on mobile Safari, Chrome on Android, and some desktop browsers. The check happens in a `useEffect` to avoid SSR/hydration mismatches.
+`ReviewStep.tsx` checks for `navigator.canShare()` support and conditionally shows a "Share PDF" button. This uses the Web Share API Level 2 (file sharing), which is supported on mobile Safari, Chrome on Android, and some desktop browsers. The check happens in a `useEffect` to avoid SSR/hydration mismatches. The Share API requires a **secure context** (HTTPS or localhost) — it will not appear when testing via local network IP over plain HTTP.
 
 ## Navigation Guide
 
@@ -210,11 +255,14 @@ This is a small project with a flat structure. The key files to understand are:
 
 | File | Purpose |
 |------|---------|
-| `src/types/form.ts` | All types and initial data -- start here to understand the data model |
-| `src/components/Wizard.tsx` | State management hub -- owns all form state and step navigation |
-| `src/lib/pdf-filler.ts` | PDF generation logic -- the core value of the app |
-| `src/lib/field-mapping.ts` | PDF field IDs -- map between form data and PDF template fields |
-| `src/lib/validation.ts` | Validation rules -- defines what is required and format constraints |
-| `src/components/steps/` | Individual wizard steps -- the UI for data entry |
-| `src/components/ui/` | Reusable form components -- shared across all steps |
-| `src/app/globals.css` | Tailwind component classes -- defines btn-primary, card, etc. |
+| `src/types/form.ts` | All types and initial data — start here to understand the data model |
+| `src/app/page.tsx` | Layout + navigation state — owns step navigation, sidebar, mobile header |
+| `src/components/Wizard.tsx` | Form state hub — owns all form data, renders current step |
+| `src/components/Sidebar.tsx` | Desktop sidebar + mobile drawer — step navigation UI |
+| `src/components/MobileHeader.tsx` | Mobile sticky header — hamburger toggle + step indicator |
+| `src/lib/pdf-filler.ts` | PDF generation logic — the core value of the app |
+| `src/lib/field-mapping.ts` | PDF field IDs — map between form data and PDF template fields |
+| `src/lib/validation.ts` | Validation rules — defines what is required and format constraints |
+| `src/components/steps/` | Individual wizard steps — the UI for data entry |
+| `src/components/ui/` | Reusable form components — shared across all steps |
+| `src/app/globals.css` | Tailwind component classes — defines btn-primary, card, card-hard, etc. |

@@ -42,8 +42,8 @@ export default function ParentInfoStep({ parentLabel, data, onChange, onNext, on
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-gray-900">{parentLabel}&apos;s Information</h2>
-        <p className="text-sm text-gray-500 mt-1">Enter your {parentLabel.toLowerCase()}&apos;s details.</p>
+        <h2 className="text-4xl font-bold tracking-tight text-ink">{parentLabel}&apos;s Information</h2>
+        <p className="text-lg text-muted mt-2">Enter your {parentLabel.toLowerCase()}&apos;s details.</p>
       </div>
 
       <div className="card">
@@ -53,11 +53,15 @@ export default function ParentInfoStep({ parentLabel, data, onChange, onNext, on
         <TextInput label="Last Name" value={data.lastName} onChange={(v) => update('lastName', v)} error={errors.lastName} placeholder="ROBERT" required />
       </div>
 
+      <hr className="border-surface" />
+
       <div className="card">
         <h3 className="card-title">Birth Information</h3>
         <DateInput label="Date of Birth" value={data.birthDate} onChange={(v) => update('birthDate', v)} error={errors.birthDate} />
         <TextInput label="Place of Birth" value={data.birthPlace} onChange={(v) => update('birthPlace', v)} placeholder="WENO, CHUUK" />
       </div>
+
+      <hr className="border-surface" />
 
       <div className="card">
         <h3 className="card-title">Citizenship</h3>

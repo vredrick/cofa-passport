@@ -75,8 +75,8 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
   return (
     <div className="space-y-6" ref={formRef}>
       <div>
-        <h2 className="text-xl font-bold text-gray-900">Applicant Information</h2>
-        <p className="text-sm text-gray-500 mt-1">Enter your personal details as they appear on official documents.</p>
+        <h2 className="text-4xl font-bold tracking-tight text-ink">Applicant Information</h2>
+        <p className="text-lg text-muted mt-2">Enter your personal details as they appear on official documents.</p>
       </div>
 
       {/* Name Section */}
@@ -87,6 +87,8 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
         <TextInput label="Last Name" value={data.lastName} onChange={(v) => update('lastName', v)} error={errors.lastName} placeholder="ROBERT" required />
         <TextInput label="Other Names Used" value={data.otherNames} onChange={(v) => update('otherNames', v)} placeholder="Leave blank if none" />
       </div>
+
+      <hr className="border-surface" />
 
       {/* Personal Details */}
       <div className="card">
@@ -101,6 +103,8 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
         <TextInput label="Eye Color" value={data.eyeColor} onChange={(v) => update('eyeColor', v)} error={errors.eyeColor} placeholder="BROWN" required />
       </div>
 
+      <hr className="border-surface" />
+
       {/* Birth & Contact */}
       <div className="card">
         <h3 className="card-title">Birth & Contact</h3>
@@ -108,6 +112,8 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
         <TextInput label="Email" value={data.email} onChange={(v) => update('email', v)} error={errors.email} placeholder="john@example.com" type="email" inputMode="email" uppercase={false} required />
         <TextInput label="Phone" value={data.phone} onChange={(v) => update('phone', v)} error={errors.phone} placeholder="+691 320 1234" type="tel" inputMode="tel" uppercase={false} required />
       </div>
+
+      <hr className="border-surface" />
 
       {/* Home Address */}
       <div className="card">
@@ -119,6 +125,8 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
         <TextInput label="Country" value={data.homeAddress.country} onChange={(v) => updateAddress('homeAddress', 'country', v)} error={errors['homeAddress.country']} placeholder="USA" required />
       </div>
 
+      <hr className="border-surface" />
+
       {/* Shipping Address */}
       <div className="card">
         <h3 className="card-title">Shipping Address</h3>
@@ -127,9 +135,9 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
             type="checkbox"
             checked={data.shippingAddressSameAsHome}
             onChange={(e) => update('shippingAddressSameAsHome', e.target.checked)}
-            className="w-4 h-4 rounded border-gray-300 text-ocean focus:ring-ocean"
+            className="w-5 h-5 rounded border-[3px] border-ocean text-ocean focus:ring-4 focus:ring-gold-focus"
           />
-          <span className="text-sm text-gray-700">Same as home address</span>
+          <span className="text-base text-ink font-medium">Same as home address</span>
         </label>
         {!data.shippingAddressSameAsHome && (
           <>
@@ -141,6 +149,8 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
           </>
         )}
       </div>
+
+      <hr className="border-surface" />
 
       {/* Previous Passport */}
       <div className="card">
@@ -155,6 +165,8 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
         )}
       </div>
 
+      <hr className="border-surface" />
+
       {/* Legal Section */}
       <div className="card">
         <h3 className="card-title">Legal Information</h3>
@@ -167,6 +179,8 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
           <TextInput label="Previous name(s) and details" value={data.nameChangedExplanation} onChange={(v) => update('nameChangedExplanation', v)} error={errors.nameChangedExplanation} required />
         )}
       </div>
+
+      <hr className="border-surface" />
 
       {/* Citizenship */}
       <div className="card">

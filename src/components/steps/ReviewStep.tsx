@@ -22,14 +22,14 @@ function formatPrevPassport(d: PreviousPassportInfo): string {
 
 function Section({ title, onEdit, children }: { title: string; onEdit: () => void; children: React.ReactNode }) {
   return (
-    <div className="card">
+    <div className="card-hard">
       <div className="flex items-center justify-between">
         <h3 className="card-title">{title}</h3>
-        <button type="button" onClick={onEdit} className="text-xs font-medium text-ocean hover:text-ocean-light">
+        <button type="button" onClick={onEdit} className="text-base font-semibold text-ocean underline hover:text-ocean-light transition-colors">
           Edit
         </button>
       </div>
-      <dl className="space-y-2">{children}</dl>
+      <dl className="grid grid-cols-1 lg:grid-cols-2 gap-4">{children}</dl>
     </div>
   );
 }
@@ -37,9 +37,9 @@ function Section({ title, onEdit, children }: { title: string; onEdit: () => voi
 function Field({ label, value }: { label: string; value: string }) {
   if (!value) return null;
   return (
-    <div className="flex justify-between gap-4">
-      <dt className="text-xs text-gray-500 flex-shrink-0">{label}</dt>
-      <dd className="text-sm text-gray-900 text-right font-medium">{value}</dd>
+    <div>
+      <dt className="text-sm text-muted uppercase tracking-wider font-bold">{label}</dt>
+      <dd className="text-lg text-ink font-medium mt-0.5">{value}</dd>
     </div>
   );
 }
@@ -145,8 +145,8 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-gray-900">Review Your Application</h2>
-        <p className="text-sm text-gray-500 mt-1">Please verify all information is correct before generating your PDF.</p>
+        <h2 className="text-4xl font-bold tracking-tight text-ink">Review Your Application</h2>
+        <p className="text-lg text-muted mt-2">Please verify all information is correct before generating your PDF.</p>
       </div>
 
       <Section title="Passport Type" onEdit={() => onEdit(0)}>
@@ -206,12 +206,12 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
 
         {status === 'success' && pdfUrl && (
           <div className="space-y-3">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-              <p className="text-sm text-green-800 font-medium">PDF generated successfully!</p>
+            <div className="bg-ocean/5 border-[3px] border-ocean rounded-lg p-4 text-center">
+              <p className="text-base text-ocean font-bold">PDF generated successfully!</p>
             </div>
             <iframe
               src={pdfUrl}
-              className="w-full h-96 rounded-lg border border-gray-200"
+              className="w-full h-[600px] rounded-lg border-[3px] border-ocean/20"
               title="PDF Preview"
             />
             <div className="flex gap-3">
@@ -232,9 +232,9 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
 
         {status === 'error' && (
           <div className="space-y-3">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
-              <p className="text-sm text-red-800 font-medium">PDF generation failed</p>
-              <p className="text-xs text-red-600 mt-1">{errorMsg}</p>
+            <div className="bg-error/5 border-[3px] border-error rounded-lg p-4 text-center">
+              <p className="text-base text-error font-bold">PDF generation failed</p>
+              <p className="text-sm text-error/80 mt-1">{errorMsg}</p>
             </div>
             <button type="button" onClick={handleGenerate} className="btn-primary">
               Try Again

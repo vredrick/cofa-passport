@@ -3,12 +3,11 @@
 import { useState } from 'react';
 import { PassportType, ValidationErrors } from '@/types/form';
 import { validatePassportType } from '@/lib/validation';
-import { RadioGroup } from '@/components/ui';
 
 const PASSPORT_OPTIONS = [
-  { value: 'ordinary', label: 'Ordinary Passport' },
-  { value: 'official', label: 'Official Passport' },
-  { value: 'diplomatic', label: 'Diplomatic Passport' },
+  { value: 'ordinary', label: 'Ordinary Passport', description: 'Standard travel document for citizens', icon: 'menu_book' },
+  { value: 'official', label: 'Official Passport', description: 'For government officials on duty', icon: 'assured_workload' },
+  { value: 'diplomatic', label: 'Diplomatic Passport', description: 'For diplomats and senior officials', icon: 'shield_person' },
 ];
 
 interface PassportTypeStepProps {
@@ -29,24 +28,45 @@ export default function PassportTypeStep({ value, onChange, onNext }: PassportTy
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-bold text-gray-900">Passport Type</h2>
-        <p className="text-sm text-gray-500 mt-1">Select the type of passport you are applying for.</p>
+        <h2 className="text-4xl font-bold tracking-tight text-ink">Passport Type</h2>
+        <p className="text-lg text-muted mt-2">Select the type of passport you are applying for.</p>
       </div>
 
-      <div className="card">
-        <RadioGroup
-          label="Type of Passport"
-          options={PASSPORT_OPTIONS}
-          value={value}
-          onChange={(v) => {
-            onChange(v as PassportType);
-            if (errors.passportType) setErrors({});
-          }}
-          error={errors.passportType}
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {PASSPORT_OPTIONS.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => {
+              onChange(option.value as PassportType);
+              if (errors.passportType) setErrors({});
+            }}
+            className={`flex flex-col items-center text-center p-6 rounded-xl border-[3px] transition-all focus:outline-none focus:ring-4 focus:ring-gold-focus ${
+              value === option.value
+                ? 'border-ocean shadow-hard bg-white'
+                : 'border-gray-200 bg-white hover:border-ocean/50'
+            }`}
+          >
+            <span
+              className={`material-symbols-outlined text-[48px] mb-3 ${
+                value === option.value ? 'text-ocean' : 'text-muted'
+              }`}
+            >
+              {option.icon}
+            </span>
+            <span className={`text-lg font-bold ${value === option.value ? 'text-ocean' : 'text-ink'}`}>
+              {option.label}
+            </span>
+            <span className="text-sm text-muted mt-1">{option.description}</span>
+          </button>
+        ))}
       </div>
+
+      {errors.passportType && (
+        <p className="error-text" role="alert">{errors.passportType}</p>
+      )}
 
       <button type="button" onClick={handleContinue} className="btn-primary">
         Continue

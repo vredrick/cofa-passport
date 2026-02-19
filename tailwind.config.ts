@@ -18,7 +18,23 @@ const config: Config = {
           DEFAULT: '#C4952A',
           light: '#D4AC2B',
           dark: '#A67C22',
+          focus: '#FFD700',
         },
+        surface: '#F0F4F8',
+        ink: '#102A43',
+        muted: '#486581',
+        error: '#D64545',
+      },
+      fontFamily: {
+        display: ['"Public Sans"', 'system-ui', 'sans-serif'],
+        body: ['"Public Sans"', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        hard: '4px 4px 0 #1B4F72',
+        'hard-sm': '2px 2px 0 #1B4F72',
+      },
+      borderWidth: {
+        '3': '3px',
       },
     },
   },

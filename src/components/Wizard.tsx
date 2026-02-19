@@ -1,35 +1,20 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { FormData, INITIAL_FORM_DATA, PassportType, ApplicantInfo, ParentInfo } from '@/types/form';
-import ProgressBar from './ProgressBar';
 import PassportTypeStep from './steps/PassportTypeStep';
 import ApplicantInfoStep from './steps/ApplicantInfoStep';
 import ParentInfoStep from './steps/ParentInfoStep';
 import ReviewStep from './steps/ReviewStep';
 
-export default function Wizard() {
+interface WizardProps {
+  currentStep: number;
+  goToStep: (step: number) => void;
+  markCompleteAndAdvance: (step: number) => void;
+}
+
+export default function Wizard({ currentStep, goToStep, markCompleteAndAdvance }: WizardProps) {
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
-
-  const goToStep = useCallback((step: number) => {
-    setCurrentStep(step);
-  }, []);
-
-  const markCompleteAndAdvance = useCallback((step: number) => {
-    setCompletedSteps((prev) => {
-      const next = new Set(Array.from(prev));
-      next.add(step);
-      return next;
-    });
-    setCurrentStep(step + 1);
-  }, []);
-
-  // Scroll to top on step change
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentStep]);
 
   const updatePassportType = useCallback((type: PassportType) => {
     setFormData((prev) => ({ ...prev, passportType: type }));
@@ -49,50 +34,46 @@ export default function Wizard() {
 
   return (
     <div>
-      <ProgressBar currentStep={currentStep} completedSteps={completedSteps} onStepClick={goToStep} />
-
-      <div className="mt-4">
-        {currentStep === 0 && (
-          <PassportTypeStep
-            value={formData.passportType}
-            onChange={updatePassportType}
-            onNext={() => markCompleteAndAdvance(0)}
-          />
-        )}
-        {currentStep === 1 && (
-          <ApplicantInfoStep
-            data={formData.applicant}
-            onChange={updateApplicant}
-            onNext={() => markCompleteAndAdvance(1)}
-            onBack={() => goToStep(0)}
-          />
-        )}
-        {currentStep === 2 && (
-          <ParentInfoStep
-            parentLabel="Father"
-            data={formData.father}
-            onChange={updateFather}
-            onNext={() => markCompleteAndAdvance(2)}
-            onBack={() => goToStep(1)}
-          />
-        )}
-        {currentStep === 3 && (
-          <ParentInfoStep
-            parentLabel="Mother"
-            data={formData.mother}
-            onChange={updateMother}
-            onNext={() => markCompleteAndAdvance(3)}
-            onBack={() => goToStep(2)}
-          />
-        )}
-        {currentStep === 4 && (
-          <ReviewStep
-            data={formData}
-            onEdit={goToStep}
-            onBack={() => goToStep(3)}
-          />
-        )}
-      </div>
+      {currentStep === 0 && (
+        <PassportTypeStep
+          value={formData.passportType}
+          onChange={updatePassportType}
+          onNext={() => markCompleteAndAdvance(0)}
+        />
+      )}
+      {currentStep === 1 && (
+        <ApplicantInfoStep
+          data={formData.applicant}
+          onChange={updateApplicant}
+          onNext={() => markCompleteAndAdvance(1)}
+          onBack={() => goToStep(0)}
+        />
+      )}
+      {currentStep === 2 && (
+        <ParentInfoStep
+          parentLabel="Father"
+          data={formData.father}
+          onChange={updateFather}
+          onNext={() => markCompleteAndAdvance(2)}
+          onBack={() => goToStep(1)}
+        />
+      )}
+      {currentStep === 3 && (
+        <ParentInfoStep
+          parentLabel="Mother"
+          data={formData.mother}
+          onChange={updateMother}
+          onNext={() => markCompleteAndAdvance(3)}
+          onBack={() => goToStep(2)}
+        />
+      )}
+      {currentStep === 4 && (
+        <ReviewStep
+          data={formData}
+          onEdit={goToStep}
+          onBack={() => goToStep(3)}
+        />
+      )}
     </div>
   );
 }
