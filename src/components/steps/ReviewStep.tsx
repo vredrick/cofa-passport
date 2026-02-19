@@ -162,6 +162,10 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
         <Field label="Hair Color" value={a.hairColor} />
         <Field label="Eye Color" value={a.eyeColor} />
         <Field label="Birth Place" value={a.birthPlace} />
+        <Field label="Citizenship" value={CITIZENSHIP_LABELS[a.citizenshipMethod] || ''} />
+      </Section>
+
+      <Section title="Contact & Address" onEdit={() => onEdit(1)}>
         <Field label="Home Address" value={homeAddressStr} />
         <Field label="Shipping Address" value={shippingAddressStr} />
         <Field label="Email" value={a.email} />
@@ -169,7 +173,6 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
         <Field label="Previous Passport" value={prevPassportValue} />
         <Field label="Convicted" value={a.convicted === 'yes' ? `Yes — ${a.convictedExplanation}` : a.convicted === 'no' ? 'No' : ''} />
         <Field label="Name Changed" value={a.nameChanged === 'yes' ? `Yes — ${a.nameChangedExplanation}` : a.nameChanged === 'no' ? 'No' : ''} />
-        <Field label="Citizenship" value={CITIZENSHIP_LABELS[a.citizenshipMethod] || ''} />
       </Section>
 
       <Section title="Father" onEdit={() => onEdit(2)}>
@@ -186,8 +189,29 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
         <Field label="FSM Citizen" value={m.fsmCitizen === 'yes' ? 'Yes' : m.fsmCitizen === 'no' ? `No — ${m.nationality}` : ''} />
       </Section>
 
-      {/* Generate / Preview / Download / Share */}
-      <div className="space-y-3">
+      {/* PDF Preview (inline, not in sticky bar) */}
+      {status === 'success' && pdfUrl && (
+        <div className="space-y-3">
+          <div className="bg-ocean/5 border-[3px] border-ocean rounded-lg p-4 text-center">
+            <p className="text-base text-ocean font-bold">PDF generated successfully!</p>
+          </div>
+          <iframe
+            src={pdfUrl}
+            className="w-full h-[600px] rounded-lg border-[3px] border-ocean/20"
+            title="PDF Preview"
+          />
+        </div>
+      )}
+
+      {status === 'error' && (
+        <div className="bg-error/5 border-[3px] border-error rounded-lg p-4 text-center">
+          <p className="text-base text-error font-bold">PDF generation failed</p>
+          <p className="text-sm text-error/80 mt-1">{errorMsg}</p>
+        </div>
+      )}
+
+      {/* Sticky bottom bar */}
+      <div className="sticky bottom-0 z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 bg-surface border-t border-ocean/10 py-4 space-y-3">
         {status === 'idle' && (
           <button type="button" onClick={handleGenerate} className="btn-primary">
             Generate PDF Application
@@ -205,41 +229,22 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
         )}
 
         {status === 'success' && pdfUrl && (
-          <div className="space-y-3">
-            <div className="bg-ocean/5 border-[3px] border-ocean rounded-lg p-4 text-center">
-              <p className="text-base text-ocean font-bold">PDF generated successfully!</p>
-            </div>
-            <iframe
-              src={pdfUrl}
-              className="w-full h-[600px] rounded-lg border-[3px] border-ocean/20"
-              title="PDF Preview"
-            />
-            <div className="flex gap-3">
-              <button type="button" onClick={handleDownload} className="btn-primary">
-                Download PDF
-              </button>
-              {shareSupported && (
-                <button type="button" onClick={handleShare} className="btn-secondary">
-                  Share PDF
-                </button>
-              )}
-            </div>
-            <button type="button" onClick={handleGenerate} className="btn-secondary">
-              Regenerate PDF
+          <div className="flex gap-3">
+            <button type="button" onClick={handleDownload} className="btn-primary">
+              Download PDF
             </button>
+            {shareSupported && (
+              <button type="button" onClick={handleShare} className="btn-secondary">
+                Share PDF
+              </button>
+            )}
           </div>
         )}
 
         {status === 'error' && (
-          <div className="space-y-3">
-            <div className="bg-error/5 border-[3px] border-error rounded-lg p-4 text-center">
-              <p className="text-base text-error font-bold">PDF generation failed</p>
-              <p className="text-sm text-error/80 mt-1">{errorMsg}</p>
-            </div>
-            <button type="button" onClick={handleGenerate} className="btn-primary">
-              Try Again
-            </button>
-          </div>
+          <button type="button" onClick={handleGenerate} className="btn-primary">
+            Try Again
+          </button>
         )}
 
         <button type="button" onClick={onBack} className="btn-secondary">

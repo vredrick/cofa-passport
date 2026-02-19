@@ -189,7 +189,7 @@ export default function ApplicantInfoStep({ data, onChange, onNext, onBack }: Ap
       </div>
 
       {/* Navigation */}
-      <div className="flex gap-3">
+      <div className="sticky bottom-0 z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 bg-surface border-t border-ocean/10 py-4 flex gap-3">
         <button type="button" onClick={onBack} className="btn-secondary">
           Back
         </button>

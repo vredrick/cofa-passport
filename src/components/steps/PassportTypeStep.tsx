@@ -68,9 +68,11 @@ export default function PassportTypeStep({ value, onChange, onNext }: PassportTy
         <p className="error-text" role="alert">{errors.passportType}</p>
       )}
 
-      <button type="button" onClick={handleContinue} className="btn-primary">
-        Continue
-      </button>
+      <div className="sticky bottom-0 z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 bg-surface border-t border-ocean/10 py-4">
+        <button type="button" onClick={handleContinue} className="btn-primary">
+          Continue
+        </button>
+      </div>
     </div>
   );
 }

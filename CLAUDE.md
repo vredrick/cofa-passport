@@ -59,7 +59,7 @@ cofa-passport/
 │   │   │   ├── PassportTypeStep.tsx   # Step 0: Card grid with Material Symbol icons
 │   │   │   ├── ApplicantInfoStep.tsx  # Step 1: All applicant fields with section separators
 │   │   │   ├── ParentInfoStep.tsx     # Steps 2-3: Reused for father/mother
-│   │   │   └── ReviewStep.tsx         # Step 4: Brutalist card summary + PDF generate/download/share
+│   │   │   └── ReviewStep.tsx         # Step 4: Split review cards + sticky PDF generate/download/share
 │   │   └── ui/
 │   │       ├── index.ts       # Barrel export for all UI components
 │   │       ├── TextInput.tsx  # Text input with auto-uppercase, 56px height, bold labels
@@ -108,7 +108,7 @@ The wizard has 5 steps (indexed 0-4), defined in `STEP_LABELS` in `src/types/for
 | 1    | Applicant | ApplicantInfoStep    | All personal info, addresses, legal |
 | 2    | Father    | ParentInfoStep       | Father's info (reusable component) |
 | 3    | Mother    | ParentInfoStep       | Mother's info (same component)     |
-| 4    | Review    | ReviewStep           | Summary, PDF generate/download/share |
+| 4    | Review    | ReviewStep           | Summary cards, PDF generate/download/share |
 
 `Wizard.tsx` owns all form data state via `useState<FormData>`. Navigation state is owned by `page.tsx` and passed in as props. There is no context provider or state management library.
 
@@ -197,6 +197,7 @@ Defined in `tailwind.config.ts`:
 - **Focus rings:** Gold (`focus:ring-4 focus:ring-gold-focus`) for accessibility
 - **Icons:** Material Symbols Outlined, referenced as `<span className="material-symbols-outlined">icon_name</span>`
 - **Shadows:** `shadow-hard` (4px 4px 0 #1B4F72), `shadow-hard-sm` (2px 2px 0 #1B4F72)
+- **Sticky navigation bar:** Back/Continue buttons in all wizard steps (0-4) use a sticky bottom bar (`sticky bottom-0 z-10`) with `bg-surface` background and `border-t border-ocean/10` separator. Negative margins (`-mx-4 px-4 sm:-mx-8 sm:px-8`) extend the background to the edges of the content container.
 
 ### Adding New Form Fields
 
@@ -248,6 +249,10 @@ Custom values added to `borderWidth` in `tailwind.config.ts` (e.g., `'3': '3px'`
 ### Share API
 
 `ReviewStep.tsx` checks for `navigator.canShare()` support and conditionally shows a "Share PDF" button. This uses the Web Share API Level 2 (file sharing), which is supported on mobile Safari, Chrome on Android, and some desktop browsers. The check happens in a `useEffect` to avoid SSR/hydration mismatches. The Share API requires a **secure context** (HTTPS or localhost) — it will not appear when testing via local network IP over plain HTTP.
+
+### Review Step Layout
+
+The review step splits applicant info into two cards: **Applicant** (personal details + citizenship) and **Contact & Address** (addresses, phone, email, legal). Both link back to step 1 for editing. The PDF preview (iframe) renders inline above the sticky bottom bar. The sticky bar shows contextual actions: Generate PDF (idle), Download/Share (success), Try Again (error), with Back always visible. There is no "Regenerate" button — navigating back and making edits resets the PDF state, requiring a fresh generate.
 
 ## Navigation Guide
 
