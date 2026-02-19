@@ -23,6 +23,12 @@ export default function MobileHeader({ currentStep, onToggleSidebar, onBackToLan
               <span className="material-symbols-outlined text-[24px]">arrow_back</span>
             </button>
           )}
+          <span className="font-bold text-base">FSM Passport</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
+            {STEP_NAMES[currentStep]} ({currentStep + 1}/5)
+          </span>
           <button
             type="button"
             onClick={onToggleSidebar}
@@ -31,11 +37,7 @@ export default function MobileHeader({ currentStep, onToggleSidebar, onBackToLan
           >
             <span className="material-symbols-outlined text-[24px]">menu</span>
           </button>
-          <span className="font-bold text-base">FSM Passport</span>
         </div>
-        <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
-          {STEP_NAMES[currentStep]} ({currentStep + 1}/5)
-        </span>
       </div>
     </header>
   );

@@ -38,3 +38,6 @@ test_*.pdf
 
 # source documents (keep in separate docs repo or drive)
 *.docx
+
+# promo video (Remotion project)
+/promo/

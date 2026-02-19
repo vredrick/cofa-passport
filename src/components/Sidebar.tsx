@@ -50,6 +50,7 @@ export default function Sidebar({
             <p className="text-xs text-muted">Form 500B</p>
           </div>
         </div>
+        {/* Desktop only: back to home link */}
         {onBackToLanding && (
           <button
             type="button"
@@ -57,7 +58,7 @@ export default function Sidebar({
               onBackToLanding();
               onMobileClose();
             }}
-            className="flex items-center gap-1 mt-3 text-sm font-semibold text-ocean hover:text-ocean-light transition-colors"
+            className="hidden lg:flex items-center gap-1 mt-3 text-sm font-semibold text-ocean hover:text-ocean-light transition-colors"
           >
             <span className="material-symbols-outlined text-[18px]">arrow_back</span>
             Back to Home
@@ -123,18 +124,18 @@ export default function Sidebar({
         {sidebarContent}
       </aside>
 
-      {/* Mobile drawer overlay */}
+      {/* Mobile drawer overlay — slides in from the right */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
+        <div className="lg:hidden fixed inset-0 z-50 flex justify-end">
           <div
             className="absolute inset-0 bg-black/50"
             onClick={onMobileClose}
           />
-          <aside className="relative w-80 max-w-[85vw] bg-white h-full shadow-xl animate-slide-in">
+          <aside className="relative w-80 max-w-[85vw] bg-white h-full shadow-xl animate-slide-in-right">
             <button
               type="button"
               onClick={onMobileClose}
-              className="absolute top-4 right-4 p-1 text-muted hover:text-ink"
+              className="absolute top-4 left-4 p-1 text-muted hover:text-ink"
               aria-label="Close menu"
             >
               <span className="material-symbols-outlined">close</span>

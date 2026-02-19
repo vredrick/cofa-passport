@@ -62,7 +62,8 @@ function formatPreviousPassport(d: PreviousPassportInfo): string {
 }
 
 export async function fillPassportPdf(data: FormData): Promise<Uint8Array> {
-  const templateUrl = `${window.location.origin}/AmendedPassportApplication0001.pdf`;
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  const templateUrl = `${window.location.origin}${basePath}/AmendedPassportApplication0001.pdf`;
   const templateBytes = await fetch(templateUrl).then(res => res.arrayBuffer());
   const pdfDoc = await PDFDocument.load(templateBytes);
   const form = pdfDoc.getForm();

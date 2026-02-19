@@ -39,7 +39,7 @@ function NationCard({
         <div className="flex items-center justify-center px-8 pt-8 pb-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={nation.passportImage}
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}${nation.passportImage}`}
             alt={`${nation.fullName} passport`}
             className={`w-full max-w-[200px] h-auto rounded-md transition-transform duration-300 ${
               isAvailable ? 'drop-shadow-[0_8px_24px_rgba(27,79,114,0.3)] group-hover:scale-[1.03]' : 'drop-shadow-[0_4px_12px_rgba(0,0,0,0.1)]'
