@@ -41,3 +41,9 @@ test_*.pdf
 
 # promo video (Remotion project)
 /promo/
+
+# MCP config (contains API keys)
+.mcp.json
+
+# skill files
+*.skill
