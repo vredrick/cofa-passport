@@ -13,6 +13,7 @@ const config: Config = {
           DEFAULT: '#1B4F72',
           light: '#2471A3',
           dark: '#154360',
+          deep: '#0B2136',
         },
         gold: {
           DEFAULT: '#C4952A',
@@ -32,9 +33,31 @@ const config: Config = {
       boxShadow: {
         hard: '4px 4px 0 #1B4F72',
         'hard-sm': '2px 2px 0 #1B4F72',
+        premium: '0 20px 40px -15px rgba(27, 79, 114, 0.25)',
+        'premium-hover': '0 30px 60px -15px rgba(27, 79, 114, 0.4)',
+        'glow-ocean': '0 0 40px -10px rgba(36, 113, 163, 0.5)',
       },
       borderWidth: {
         '3': '3px',
+      },
+      keyframes: {
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        glow: {
+          '0%, 100%': { opacity: '0.4' },
+          '50%': { opacity: '0.8' },
+        },
+      },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        float: 'float 6s ease-in-out infinite',
+        glow: 'glow 4s ease-in-out infinite',
       },
     },
   },
