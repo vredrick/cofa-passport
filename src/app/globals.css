@@ -90,7 +90,7 @@ body {
 
 /* Landing page styles */
 .nav-pill {
-  @apply fixed top-4 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-2.5 rounded-full border border-ocean/15 bg-white/80 backdrop-blur-xl;
+  @apply fixed top-4 left-4 right-4 z-40 flex items-center gap-3 px-4 py-2.5 rounded-full border border-ocean/15 bg-white/80 backdrop-blur-xl md:left-1/2 md:right-auto md:-translate-x-1/2 md:w-auto;
   box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
 }
 

@@ -19,22 +19,22 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
 
       {/* ─── Section 1: Floating Pill Navbar ─── */}
       <nav className="nav-pill">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <span className="material-symbols-outlined text-ocean text-[20px]">shield</span>
-          <span className="font-bold text-ink text-sm tracking-tight">COFA Passport</span>
+          <span className="hidden sm:inline font-bold text-ink text-sm tracking-tight">COFA Passport</span>
         </div>
 
-        <div className="hidden md:flex items-center gap-1 ml-4">
+        <div className="flex items-center gap-0.5 sm:gap-1 ml-auto md:ml-4">
           <button
             type="button"
             onClick={() => setDetailsOpen(true)}
-            className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted hover:text-ocean px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+            className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
           >
-            Requirements
+            Info
           </button>
           <a
             href="#security"
-            className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted hover:text-ocean px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+            className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
           >
             Security
           </a>
@@ -43,7 +43,7 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
         <button
           type="button"
           onClick={onStartApplication}
-          className="ml-4 px-5 py-2 bg-ocean text-white text-sm font-bold rounded-full hover:bg-ocean-light transition-colors"
+          className="ml-2 md:ml-4 px-4 sm:px-5 py-2 bg-ocean text-white text-xs sm:text-sm font-bold rounded-full hover:bg-ocean-light transition-colors whitespace-nowrap shrink-0"
         >
           Start Now
         </button>
@@ -61,7 +61,7 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-ocean" />
             </span>
             <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">
-              System Operational // v2.0
+              FSM Form 500B — Available Now
             </span>
           </div>
 
