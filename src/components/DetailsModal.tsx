@@ -14,9 +14,9 @@ export default function DetailsModal({ open, onClose, onStartApplication }: Deta
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-lg max-h-[85vh] bg-white rounded-t-2xl sm:rounded-2xl border-[3px] border-ocean shadow-hard overflow-y-auto">
+      <div className="relative w-full max-w-lg max-h-[85vh] bg-white rounded-t-2xl sm:rounded-2xl border border-ocean/20 shadow-smooth overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-ocean text-white px-6 py-4 flex items-center justify-between rounded-t-xl">
+        <div className="sticky top-0 bg-ocean-deep text-white px-6 py-4 flex items-center justify-between rounded-t-xl">
           <h2 className="text-xl font-bold">FSM Passport Info</h2>
           <button
             type="button"
@@ -33,7 +33,7 @@ export default function DetailsModal({ open, onClose, onStartApplication }: Deta
           <section>
             <div className="flex items-center gap-2 mb-3">
               <span className="material-symbols-outlined text-ocean text-[22px]">checklist</span>
-              <h3 className="font-bold text-ink text-lg">Requirements</h3>
+              <h3 className="font-bold text-ink text-lg font-mono">Requirements</h3>
             </div>
             <ul className="space-y-2">
               {FSM_PASSPORT_INFO.requirements.map((req) => (
@@ -51,7 +51,7 @@ export default function DetailsModal({ open, onClose, onStartApplication }: Deta
           <section>
             <div className="flex items-center gap-2 mb-3">
               <span className="material-symbols-outlined text-ocean text-[22px]">payments</span>
-              <h3 className="font-bold text-ink text-lg">Fees</h3>
+              <h3 className="font-bold text-ink text-lg font-mono">Fees</h3>
             </div>
             <div className="space-y-2">
               {FSM_PASSPORT_INFO.fees.map((fee) => (
@@ -67,7 +67,7 @@ export default function DetailsModal({ open, onClose, onStartApplication }: Deta
           <section>
             <div className="flex items-center gap-2 mb-3">
               <span className="material-symbols-outlined text-ocean text-[22px]">schedule</span>
-              <h3 className="font-bold text-ink text-lg">Processing Time</h3>
+              <h3 className="font-bold text-ink text-lg font-mono">Processing Time</h3>
             </div>
             <div className="space-y-2">
               {FSM_PASSPORT_INFO.processingTime.map((item) => (
@@ -83,7 +83,7 @@ export default function DetailsModal({ open, onClose, onStartApplication }: Deta
           <section>
             <div className="flex items-center gap-2 mb-3">
               <span className="material-symbols-outlined text-ocean text-[22px]">location_on</span>
-              <h3 className="font-bold text-ink text-lg">Passport Offices</h3>
+              <h3 className="font-bold text-ink text-lg font-mono">Passport Offices</h3>
             </div>
             <div className="space-y-3">
               {FSM_PASSPORT_INFO.offices.map((office) => (

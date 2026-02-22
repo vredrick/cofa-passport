@@ -13,7 +13,7 @@ All data processing happens entirely in the browser. No data is ever sent to a s
 - **Framework:** Next.js 14.2 with App Router, static export (`output: 'export'`)
 - **Language:** TypeScript (strict mode)
 - **Styling:** Tailwind CSS 3.4 with custom theme colors (`ocean`, `gold`, `surface`, `ink`, `muted`, `error`)
-- **Font:** Public Sans (via `next/font/google`)
+- **Fonts:** Public Sans (body), DM Serif Display (serif accents), Space Mono (monospace labels) — loaded via `next/font/google` with CSS variable strategy
 - **Icons:** Material Symbols Outlined (loaded via `<link>` in layout)
 - **PDF generation:** pdf-lib 1.17
 - **React:** 18.x (all client components, no server components)
@@ -52,13 +52,13 @@ cofa-passport/
 │   └── passport-palau.png    # Palau passport cover image (landing page)
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx        # Root layout (Public Sans font, Material Symbols link, metadata)
+│   │   ├── layout.tsx        # Root layout (Public Sans + DM Serif Display + Space Mono fonts, Material Symbols link, metadata)
 │   │   ├── page.tsx          # Home page: view toggle (landing/wizard), navigation state
-│   │   ├── globals.css       # Tailwind directives + component classes (btn, card, form-input, etc.)
+│   │   ├── globals.css       # Tailwind directives + component classes (btn, card, form-input) + landing page styles (nav-pill, feature-card, step-card, etc.)
 │   │   ├── favicon.ico
 │   │   └── fonts/            # Geist font files (woff, legacy — not currently used)
 │   ├── components/
-│   │   ├── LandingPage.tsx   # Nation selector: hero, passport cover cards, FSM actions
+│   │   ├── LandingPage.tsx   # Full landing page: floating nav, hero, nation cards (FSM/RMI/Palau), old way vs better way, how it works steps, footer
 │   │   ├── DetailsModal.tsx  # FSM passport info modal (requirements, fees, offices)
 │   │   ├── Sidebar.tsx       # Desktop sidebar nav (w-80) + right-side mobile drawer (step tracking only)
 │   │   ├── MobileHeader.tsx  # Sticky mobile header: back arrow (left), title, step badge + hamburger (right)
@@ -98,7 +98,7 @@ cofa-passport/
 
 `page.tsx` manages a `view` state (`'landing' | 'wizard'`) to toggle between two top-level views without route changes:
 
-- **Landing view (`'landing'`):** Renders `<LandingPage>` — a full-page nation selector with passport cover images, FSM action buttons, and a details modal. RMI and Palau cards appear dimmed with "Coming Soon" badges.
+- **Landing view (`'landing'`):** Renders `<LandingPage>` — a multi-section landing page with floating pill navbar, hero with CTA, nation passport cards (FSM active, RMI/Palau coming soon), "The Old Way vs A Better Way" messaging, how-it-works steps, and footer. On mobile, nation cards scroll horizontally with snap-to-center; FSM appears first in DOM order, with CSS `order` classes repositioning it to center on desktop.
 - **Wizard view (`'wizard'`):** Renders the existing Sidebar + MobileHeader + Wizard layout for FSM Form 500B.
 
 Clicking "Passport Renewal" or "Start Application" in the landing page/modal sets view to `'wizard'`. The Sidebar (desktop only) and MobileHeader each accept an optional `onBackToLanding` prop that returns the user to the landing view. On mobile, the back arrow in the MobileHeader handles navigation home; the mobile drawer is purely for step tracking.
@@ -188,7 +188,7 @@ Field IDs are defined in `src/lib/field-mapping.ts` as the `FIELD_IDS` constant.
 - **Path alias:** Use `@/*` to import from `src/*`. Example: `import { TextInput } from '@/components/ui'`.
 - **UI barrel export:** All `src/components/ui/` components are re-exported from `src/components/ui/index.ts`. Import from the barrel, not individual files.
 - **TextInput auto-uppercase:** The `TextInput` component uppercases input by default (`uppercase={true}`). Pass `uppercase={false}` for email and phone fields.
-- **Tailwind component classes:** Reusable utility classes are defined in `src/app/globals.css` under `@layer components`: `btn-primary`, `btn-secondary`, `form-input`, `form-input-error`, `card`, `card-hard`, `card-title`, `error-text`. Use these instead of repeating Tailwind utilities.
+- **Tailwind component classes:** Reusable utility classes are defined in `src/app/globals.css` under `@layer components`: `btn-primary`, `btn-secondary`, `form-input`, `form-input-error`, `card`, `card-hard`, `card-title`, `error-text`. Landing page classes are defined outside `@layer`: `nav-pill`, `mono-label`, `feature-card`, `step-card`, `noise-overlay`, `grid-bg`, `passport-hover`, `scrollbar-hide`. Use these instead of repeating Tailwind utilities.
 - **Arbitrary border width:** Use `border-[3px]` instead of extending Tailwind's `borderWidth` config — custom `borderWidth` values don't resolve inside `@apply` directives in Tailwind CSS 3.4.
 
 ### Theme Colors
@@ -200,6 +200,7 @@ Defined in `tailwind.config.ts`:
 | `ocean`        | `#1B4F72` | Primary blue (buttons, headers, borders) |
 | `ocean-light`  | `#2471A3` | Hover state                    |
 | `ocean-dark`   | `#154360` | Active/pressed state           |
+| `ocean-deep`   | `#0B2136` | Dark backgrounds (FSM card, footer, modal header) |
 | `gold`         | `#C4952A` | Accent                         |
 | `gold-light`   | `#D4AC2B` | Accent variant                 |
 | `gold-dark`    | `#A67C22` | Accent variant                 |
@@ -217,7 +218,7 @@ Defined in `tailwind.config.ts`:
 - **Cards:** `.card` for standard sections, `.card-hard` for brutalist shadow (`4px 4px 0 #1B4F72`)
 - **Focus rings:** Gold (`focus:ring-4 focus:ring-gold-focus`) for accessibility
 - **Icons:** Material Symbols Outlined, referenced as `<span className="material-symbols-outlined">icon_name</span>`
-- **Shadows:** `shadow-hard` (4px 4px 0 #1B4F72), `shadow-hard-sm` (2px 2px 0 #1B4F72)
+- **Shadows:** `shadow-hard` (4px 4px 0 #1B4F72), `shadow-hard-sm` (2px 2px 0 #1B4F72), `shadow-premium` / `shadow-premium-hover` (landing page cards), `shadow-smooth` (modals)
 - **Sticky navigation bar:** Back/Continue buttons in all wizard steps (0-4) use a sticky bottom bar (`sticky bottom-0 z-10`) with `bg-surface` background and `border-t border-ocean/10` separator. Negative margins (`-mx-4 px-4 sm:-mx-8 sm:px-8`) extend the background to the edges of the content container.
 
 ### Adding New Form Fields
@@ -239,7 +240,7 @@ When adding RMI or Palau support:
 4. Add a passport info object (like `FSM_PASSPORT_INFO`) to `src/data/nations.ts` for the details modal
 5. The form data model may need new types if the other nation's form has different fields
 6. The wizard steps may need conditional sections or entirely new step components
-7. The landing page `NationCard` will automatically show action buttons once status is `'available'`
+7. Add a new card to the landing page nation cards section in `LandingPage.tsx` (follow the FSM card pattern for active nations, RMI/Palau pattern for coming-soon)
 
 ## Important Gotchas
 
@@ -297,6 +298,6 @@ This is a small project with a flat structure. The key files to understand are:
 | `src/lib/validation.ts` | Validation rules — defines what is required and format constraints |
 | `src/components/steps/` | Individual wizard steps — the UI for data entry |
 | `src/components/ui/` | Reusable form components — shared across all steps |
-| `src/app/globals.css` | Tailwind component classes + slide-in-right animation |
+| `src/app/globals.css` | Tailwind component classes + landing page styles + slide-in-right animation |
 | `next.config.mjs` | Static export config + GitHub Pages basePath/assetPrefix |
 | `.github/workflows/deploy.yml` | GitHub Actions workflow — auto-deploys to GitHub Pages on push to main |

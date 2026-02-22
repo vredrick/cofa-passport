@@ -1,186 +1,367 @@
 'use client';
 
 import { useState } from 'react';
-import { NATIONS, type NationInfo } from '@/data/nations';
 import DetailsModal from '@/components/DetailsModal';
 
 interface LandingPageProps {
   onStartApplication: () => void;
 }
 
-function NationCard({
-  nation,
-  onStartApplication,
-  onShowDetails,
-}: {
-  nation: NationInfo;
-  onStartApplication: () => void;
-  onShowDetails: () => void;
-}) {
-  const isAvailable = nation.status === 'available';
-
-  return (
-    <div
-      className={`group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-500 ${isAvailable
-        ? 'border border-ocean/15 bg-white shadow-premium hover:shadow-premium-hover hover:-translate-y-1 z-10 hover:z-20'
-        : 'border border-ocean/10 bg-white shadow-sm opacity-90'
-        }`}
-    >
-      {/* Coming Soon badge */}
-      {!isAvailable && (
-        <div className="absolute top-4 right-4 z-10 bg-ocean/80 text-white text-[11px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full backdrop-blur-sm">
-          Coming Soon
-        </div>
-      )}
-
-      {/* Passport cover image */}
-      <div className={`relative bg-gradient-to-b from-ocean/5 to-transparent overflow-hidden ${isAvailable ? '' : 'opacity-50 grayscale-[40%]'}`}>
-
-        {/* Backdrop glow for available passports */}
-        {isAvailable && (
-          <div className="absolute inset-0 bg-ocean-light/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl scale-125 rounded-full" />
-        )}
-
-        <div className="relative flex items-center justify-center px-8 pt-8 pb-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}${nation.passportImage}`}
-            alt={`${nation.fullName} passport`}
-            className={`w-full max-w-[200px] h-auto rounded-md transition-all duration-500 ease-out ${isAvailable ? 'drop-shadow-[0_12px_24px_rgba(27,79,114,0.25)] group-hover:drop-shadow-[0_20px_32px_rgba(27,79,114,0.35)] group-hover:scale-[1.04] group-hover:-translate-y-1' : 'drop-shadow-[0_4px_12px_rgba(0,0,0,0.1)]'
-              }`}
-          />
-        </div>
-      </div>
-
-      {/* Gold divider */}
-      <div className={`h-1.5 transition-colors duration-500 ${isAvailable ? 'bg-gradient-to-r from-gold to-gold-light group-hover:from-gold-light group-hover:to-gold' : 'bg-ocean/10'}`} />
-
-      {/* Content */}
-      <div className="flex-1 p-5 flex flex-col">
-        <h3 className={`font-bold text-xl mb-1 ${isAvailable ? 'text-ink' : 'text-ink/40'}`}>
-          {nation.name}
-        </h3>
-        <p className={`text-sm mb-4 ${isAvailable ? 'text-muted' : 'text-muted/40'}`}>
-          {nation.fullName}
-        </p>
-
-        {isAvailable ? (
-          <div className="mt-auto space-y-2.5">
-            <button type="button" onClick={onStartApplication} className="btn-primary">
-              <span className="flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[20px]">edit_document</span>
-                Passport Renewal
-              </span>
-            </button>
-            <button
-              type="button"
-              disabled
-              className="btn-secondary opacity-40 cursor-not-allowed"
-            >
-              <span className="flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[18px]">lock</span>
-                Replacement
-                <span className="text-xs font-normal">(Soon)</span>
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={onShowDetails}
-              className="w-full text-center text-sm font-semibold text-ocean hover:text-ocean-light transition-colors py-1.5"
-            >
-              <span className="flex items-center justify-center gap-1">
-                <span className="material-symbols-outlined text-[18px]">info</span>
-                Requirements & Fees
-              </span>
-            </button>
-          </div>
-        ) : (
-          <div className="mt-auto pt-2">
-            <p className="text-sm text-muted/50 text-center">
-              We&apos;re working on adding {nation.name} passport services.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export default function LandingPage({ onStartApplication }: LandingPageProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col">
-      {/* Hero */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-ocean-deep via-ocean to-ocean-light text-white">
-        {/* Micronesian seashell background pattern */}
-        <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url(/images/micronesian-pattern.png)', backgroundSize: '300px' }} />
+    <div className="min-h-screen bg-surface">
+      {/* Noise overlay */}
+      <div className="noise-overlay" />
 
-        {/* Glowing orbs */}
-        <div className="absolute -top-20 -left-20 w-[40rem] h-[40rem] bg-ocean-light/30 rounded-full mix-blend-screen filter blur-[100px] animate-glow pointer-events-none" />
-        <div className="absolute -bottom-40 -right-20 w-[50rem] h-[50rem] bg-[#0E2C48]/50 rounded-full mix-blend-screen filter blur-[120px] animate-glow delay-1000 pointer-events-none" />
-
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-8 py-10 sm:py-16">
-          <div className="text-center">
-            {/* COFA 4-star emblem */}
-            <svg width="56" height="56" viewBox="0 0 56 56" className="text-white mx-auto mb-6 animate-float drop-shadow-md">
-              <circle cx="28" cy="28" r="26" fill="none" stroke="currentColor" strokeWidth="1.5" />
-              {[
-                [28, 11],
-                [28, 45],
-                [11, 28],
-                [45, 28],
-              ].map(([cx, cy], i) => (
-                <circle key={i} cx={cx} cy={cy} r="3" fill="currentColor" />
-              ))}
-            </svg>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 animate-fade-in-up opacity-0">
-              COFA Passport Services
-            </h1>
-            <p className="text-base sm:text-lg text-white/80 max-w-xl mx-auto mb-6 animate-fade-in-up opacity-0 delay-100">
-              Fill out your passport application online, generate a pre-filled PDF, and print it for submission.
-            </p>
-            <div className="inline-flex items-center gap-2 bg-white/10 text-white/90 text-sm font-medium px-4 py-2 rounded-full border border-white/20 backdrop-blur-md animate-fade-in-up opacity-0 delay-200 shadow-lg">
-              <span className="material-symbols-outlined text-[16px]">shield_lock</span>
-              100% private — your data never leaves this device
-            </div>
-          </div>
+      {/* ─── Section 1: Floating Pill Navbar ─── */}
+      <nav className="nav-pill">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-ocean text-[20px]">shield</span>
+          <span className="font-bold text-ink text-sm tracking-tight">COFA Passport</span>
         </div>
-      </div>
 
-      {/* Section label */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 w-full">
-        <p className="text-sm font-bold text-ocean uppercase tracking-widest mt-8 mb-4">
-          Select your nation
-        </p>
-      </div>
-
-      {/* Nation cards */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-16 w-full flex-1">
-        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4 scrollbar-hide sm:mx-0 sm:px-0 sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 sm:pb-0">
-          {NATIONS.map((nation) => (
-            <div key={nation.id} className="min-w-[280px] max-w-[300px] flex-shrink-0 snap-center sm:min-w-0 sm:max-w-none sm:flex-shrink">
-              <NationCard
-                nation={nation}
-                onStartApplication={onStartApplication}
-                onShowDetails={() => setDetailsOpen(true)}
-              />
-            </div>
-          ))}
+        <div className="hidden md:flex items-center gap-1 ml-4">
+          <button
+            type="button"
+            onClick={() => setDetailsOpen(true)}
+            className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted hover:text-ocean px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+          >
+            Requirements
+          </button>
+          <a
+            href="#security"
+            className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted hover:text-ocean px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+          >
+            Security
+          </a>
         </div>
-      </div>
 
-      {/* Footer */}
-      <footer className="border-t border-ocean/10 bg-white mt-auto">
-        <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 text-sm text-muted">
-            <span className="material-symbols-outlined text-[16px]">shield_lock</span>
-            Your data never leaves your device. No accounts, no servers.
+        <button
+          type="button"
+          onClick={onStartApplication}
+          className="ml-4 px-5 py-2 bg-ocean text-white text-sm font-bold rounded-full hover:bg-ocean-light transition-colors"
+        >
+          Start Now
+        </button>
+      </nav>
+
+      {/* ─── Section 2: Hero ─── */}
+      <section className="relative min-h-screen flex items-center justify-center bg-surface overflow-hidden">
+        <div className="absolute inset-0 grid-bg" />
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-8 text-center">
+          {/* Status pill */}
+          <div className="inline-flex items-center gap-2.5 mb-8">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ocean opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-ocean" />
+            </span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">
+              System Operational // v2.0
+            </span>
           </div>
-          <p className="text-xs text-muted/60">
-            This is not an official government website. This tool helps you fill out application
-            forms that must be printed and submitted to the appropriate passport office.
+
+          {/* Heading */}
+          <h1 className="mb-6">
+            <span className="block text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-ink">
+              Passport Renewal
+            </span>
+            <span className="block text-4xl sm:text-5xl lg:text-7xl font-serif italic text-gold mt-1">
+              Shouldn&apos;t Be This Hard.
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-base sm:text-lg text-muted max-w-lg mx-auto mb-10 leading-relaxed">
+            Fill out your FSM form online &mdash; correctly, the first time.<br className="hidden sm:block" />
+            Print it ready to sign, notarize, and submit.
           </p>
+
+          {/* CTA */}
+          <button
+            type="button"
+            onClick={onStartApplication}
+            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-ocean text-white font-bold text-lg rounded-xl overflow-hidden transition-all duration-300 hover:shadow-glow-ocean"
+          >
+            <span className="absolute inset-0 bg-ocean-light translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300" />
+            <span className="relative flex items-center gap-3">
+              <span className="material-symbols-outlined text-[20px]">edit_document</span>
+              Fill Out Your Passport Form
+              <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </span>
+          </button>
+
+          {/* Privacy badge */}
+          <div className="mt-8 inline-flex items-center gap-2 text-muted/70 text-sm">
+            <span className="material-symbols-outlined text-[16px]">lock</span>
+            <span className="font-mono text-xs tracking-wide">100% Client-Side Processing</span>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted/40">
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Scroll</span>
+          <span className="material-symbols-outlined text-[20px] animate-float">expand_more</span>
+        </div>
+      </section>
+
+      {/* ─── Section 3: Nation Feature Cards ─── */}
+      <section className="relative py-20 sm:py-28 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          <div className="mb-12">
+            <span className="mono-label">Supported Nations</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-ink mt-3 tracking-tight">
+              Choose your <span className="font-serif italic text-ocean">passport.</span>
+            </h2>
+          </div>
+
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4 scrollbar-hide md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0 items-center">
+            {/* FSM first in DOM (shows first on mobile scroll) — centered on desktop via order-2 */}
+            <div className="feature-card bg-ocean-deep min-w-[80vw] snap-center md:min-w-0 md:h-[500px] flex flex-col border border-ocean/30 shadow-premium hover:shadow-premium-hover hover:-translate-y-1 shrink-0 md:order-2">
+              <div className="flex-1 flex items-center justify-center p-8 pb-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${basePath}/passport-fsm.webp`}
+                  alt="FSM passport"
+                  className="passport-hover w-full max-w-[200px] h-auto rounded-md drop-shadow-[0_16px_32px_rgba(0,0,0,0.4)] hover:scale-105 hover:-translate-y-1"
+                />
+              </div>
+
+              <div className="p-6 pt-2 space-y-4">
+                <div>
+                  <h3 className="font-bold text-xl text-white">FSM</h3>
+                  <p className="font-mono text-xs text-white/50 mt-0.5">Federated States of Micronesia</p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={onStartApplication}
+                  className="w-full py-3 bg-gold text-white font-bold rounded-xl hover:bg-gold-light transition-colors"
+                >
+                  Start Application
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDetailsOpen(true)}
+                  className="w-full text-center font-mono text-xs text-white/60 hover:text-white transition-colors py-1"
+                >
+                  Requirements &amp; Fees
+                </button>
+              </div>
+            </div>
+
+            {/* RMI — second in DOM (swipe right on mobile), first column on desktop via order-1 */}
+            <div className="feature-card bg-surface border border-ocean/10 min-w-[75vw] snap-center md:min-w-0 min-h-[360px] md:h-[440px] flex flex-col shrink-0 md:order-1">
+              <div className="flex-1 flex items-center justify-center p-8 pb-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${basePath}/passport-rmi.png`}
+                  alt="RMI passport"
+                  className="w-full max-w-[160px] h-auto rounded-md opacity-25 grayscale"
+                />
+              </div>
+
+              <div className="p-6 pt-2 space-y-3">
+                <div>
+                  <h3 className="font-bold text-xl text-ink/40">RMI</h3>
+                  <p className="font-mono text-xs text-muted/40 mt-0.5">Republic of the Marshall Islands</p>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.15em] text-muted/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold/40" />
+                  Coming Soon
+                </div>
+              </div>
+            </div>
+
+            {/* Palau — third in DOM and on desktop via order-3 */}
+            <div className="feature-card bg-surface border border-ocean/10 min-w-[75vw] snap-center md:min-w-0 min-h-[360px] md:h-[440px] flex flex-col shrink-0 md:order-3">
+              <div className="flex-1 flex items-center justify-center p-8 pb-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${basePath}/passport-palau.png`}
+                  alt="Palau passport"
+                  className="w-full max-w-[160px] h-auto rounded-md opacity-25 grayscale"
+                />
+              </div>
+
+              <div className="p-6 pt-2 space-y-3">
+                <div>
+                  <h3 className="font-bold text-xl text-ink/40">Palau</h3>
+                  <p className="font-mono text-xs text-muted/40 mt-0.5">Republic of Palau</p>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.15em] text-muted/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold/40" />
+                  Coming Soon
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Section 4: The Old Way vs A Better Way ─── */}
+      <section id="security" className="py-20 sm:py-28 bg-surface">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left: The Old Way */}
+            <div className="text-ink/20 space-y-4">
+              <span className="mono-label !text-ink/15">The Old Way</span>
+              <p className="text-2xl sm:text-3xl font-bold leading-snug">
+                Download the form. Print it out. Fill it in by hand. Make a mistake.
+                Cross it out. Start over with a fresh copy. Hope it&apos;s neat enough.
+                Drive to get it notarized. Find out you missed a field...
+              </p>
+            </div>
+
+            {/* Right: A Better Way */}
+            <div className="space-y-5">
+              <span className="mono-label text-gold">A Better Way</span>
+              <p className="text-3xl sm:text-4xl font-serif italic text-ink leading-tight">
+                Fill it out right<br />
+                <span className="text-gold">the first time.</span>
+              </p>
+              <p className="text-base text-muted leading-relaxed max-w-md">
+                This app walks you through the FSM passport application step by step.
+                When you&apos;re done, print your completed form &mdash; ready to sign and notarize.
+                No more handwriting mistakes. No more starting over.
+              </p>
+              <div className="flex items-center gap-2 text-sm text-muted/70 pt-1">
+                <span className="material-symbols-outlined text-[16px]">lock</span>
+                <span>Your information stays on your device. We don&apos;t collect or store anything.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Section 5: Process Steps ─── */}
+      <section className="py-20 sm:py-28 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          <div className="mb-12">
+            <span className="mono-label">How It Works</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-ink mt-3 tracking-tight">
+              Three steps. <span className="font-serif italic text-ocean">That&apos;s it.</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Step 01 */}
+            <div className="step-card group">
+              <span className="font-mono text-7xl font-bold text-ocean/10 group-hover:text-gold/20 transition-colors duration-500 leading-none">
+                01
+              </span>
+              <div className="relative mt-4 mb-3">
+                <span className="material-symbols-outlined text-[32px] text-ocean group-hover:text-gold transition-colors duration-500">
+                  public
+                </span>
+                {/* Spinning dashed circle on hover */}
+                <div className="absolute -inset-2 border border-dashed border-ocean/0 group-hover:border-gold/30 rounded-full group-hover:animate-spin-slow transition-colors duration-500" />
+              </div>
+              <h3 className="font-bold text-lg text-ink">Select Nation</h3>
+              <p className="font-mono text-xs text-muted mt-2 leading-relaxed">
+                Choose your COFA nation and passport type to get started.
+              </p>
+            </div>
+
+            {/* Step 02 */}
+            <div className="step-card group">
+              <span className="font-mono text-7xl font-bold text-ocean/10 group-hover:text-gold/20 transition-colors duration-500 leading-none">
+                02
+              </span>
+              <div className="relative mt-4 mb-3">
+                <span className="material-symbols-outlined text-[32px] text-ocean group-hover:text-gold transition-colors duration-500">
+                  edit_note
+                </span>
+                <div className="absolute -inset-2 border border-dashed border-ocean/0 group-hover:border-gold/30 rounded-full group-hover:animate-spin-slow transition-colors duration-500" />
+              </div>
+              <h3 className="font-bold text-lg text-ink">Fill Details</h3>
+              <p className="font-mono text-xs text-muted mt-2 leading-relaxed">
+                Enter your personal information through our guided form wizard.
+              </p>
+            </div>
+
+            {/* Step 03 */}
+            <div className="step-card group">
+              <span className="font-mono text-7xl font-bold text-ocean/10 group-hover:text-gold/20 transition-colors duration-500 leading-none">
+                03
+              </span>
+              <div className="relative mt-4 mb-3">
+                <span className="material-symbols-outlined text-[32px] text-ocean group-hover:text-gold transition-colors duration-500">
+                  print
+                </span>
+                <div className="absolute -inset-2 border border-dashed border-ocean/0 group-hover:border-gold/30 rounded-full group-hover:animate-spin-slow transition-colors duration-500" />
+              </div>
+              <h3 className="font-bold text-lg text-ink">Print PDF</h3>
+              <p className="font-mono text-xs text-muted mt-2 leading-relaxed">
+                Generate your pre-filled application and print it for submission.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Section 6: Footer ─── */}
+      <footer className="bg-ocean-deep text-white py-16 sm:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          {/* Massive brand text */}
+          <h2
+            className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tighter leading-none mb-10"
+            style={{
+              background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(36,113,163,0.4) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            COFA<br />PASSPORT
+          </h2>
+
+          {/* Status line */}
+          <div className="flex items-center gap-2.5 mb-10">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+            </span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">
+              System Status: Operational
+            </span>
+          </div>
+
+          {/* Links */}
+          <div className="flex flex-wrap gap-6 mb-10">
+            <button
+              type="button"
+              onClick={() => setDetailsOpen(true)}
+              className="font-mono text-xs uppercase tracking-[0.15em] text-white/50 hover:text-white transition-colors"
+            >
+              Requirements
+            </button>
+            <a
+              href="https://github.com/AikenOZ/cofa-passport"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs uppercase tracking-[0.15em] text-white/50 hover:text-white transition-colors"
+            >
+              GitHub Repo
+            </a>
+          </div>
+
+          {/* Disclaimer + copyright */}
+          <div className="border-t border-white/10 pt-6 space-y-3">
+            <p className="text-xs text-white/30 max-w-2xl leading-relaxed">
+              This is not an official government website. This tool helps you fill out passport
+              application forms that must be printed and submitted to the appropriate passport office.
+            </p>
+            <p className="font-mono text-[10px] text-white/20 uppercase tracking-[0.15em]">
+              &copy; {new Date().getFullYear()} COFA Passport Services
+            </p>
+          </div>
         </div>
       </footer>
 

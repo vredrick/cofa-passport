@@ -1,8 +1,24 @@
 import type { Metadata, Viewport } from 'next';
-import { Public_Sans } from 'next/font/google';
+import { Public_Sans, DM_Serif_Display, Space_Mono } from 'next/font/google';
 import './globals.css';
 
-const publicSans = Public_Sans({ subsets: ['latin'] });
+const publicSans = Public_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+});
+
+const dmSerif = DM_Serif_Display({
+  weight: '400',
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-serif',
+});
+
+const spaceMono = Space_Mono({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-mono',
+});
 
 export const metadata: Metadata = {
   title: 'COFA Passport Services',
@@ -29,7 +45,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
         />
       </head>
-      <body className={publicSans.className}>{children}</body>
+      <body className={`${publicSans.variable} ${dmSerif.variable} ${spaceMono.variable} ${publicSans.className}`}>{children}</body>
     </html>
   );
 }

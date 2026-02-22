@@ -27,8 +27,9 @@ const config: Config = {
         error: '#D64545',
       },
       fontFamily: {
-        display: ['"Public Sans"', 'system-ui', 'sans-serif'],
-        body: ['"Public Sans"', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', '"Public Sans"', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', '"DM Serif Display"', 'Georgia', 'serif'],
+        mono: ['var(--font-mono)', '"Space Mono"', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
         hard: '4px 4px 0 #1B4F72',
@@ -36,6 +37,7 @@ const config: Config = {
         premium: '0 20px 40px -15px rgba(27, 79, 114, 0.25)',
         'premium-hover': '0 30px 60px -15px rgba(27, 79, 114, 0.4)',
         'glow-ocean': '0 0 40px -10px rgba(36, 113, 163, 0.5)',
+        smooth: '0 20px 40px -10px rgba(0,0,0,0.15)',
       },
       borderWidth: {
         '3': '3px',
@@ -53,11 +55,16 @@ const config: Config = {
           '0%, 100%': { opacity: '0.4' },
           '50%': { opacity: '0.8' },
         },
+        'spin-slow': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         float: 'float 6s ease-in-out infinite',
         glow: 'glow 4s ease-in-out infinite',
+        'spin-slow': 'spin-slow 12s linear infinite',
       },
     },
   },
