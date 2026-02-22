@@ -1,6 +1,6 @@
-# COFA Passport Application
+# COFA Supports
 
-A privacy-first web application that helps citizens of Compact of Free Association (COFA) nations complete their passport applications digitally. All data processing happens entirely in the browser -- nothing is sent to a server.
+A privacy-first web application providing digital support services for citizens of Compact of Free Association (COFA) nations. Currently helps complete passport applications digitally. All data processing happens entirely in the browser -- nothing is sent to a server.
 
 ## Supported Nations
 

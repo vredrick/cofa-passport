@@ -21,8 +21,8 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'COFA Passport Services',
-  description: 'Digital passport application assistant for COFA nations — FSM, RMI, and Palau. Complete forms, generate pre-filled PDFs, and print for submission.',
+  title: 'COFA Supports',
+  description: 'Digital support services for COFA nations — FSM, RMI, and Palau. Complete forms, generate pre-filled PDFs, and access resources for COFA citizens.',
 };
 
 export const viewport: Viewport = {

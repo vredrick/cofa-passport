@@ -20,8 +20,14 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
       {/* ─── Section 1: Floating Pill Navbar ─── */}
       <nav className="nav-pill">
         <div className="flex items-center gap-2 shrink-0">
-          <span className="material-symbols-outlined text-ocean text-[20px]">shield</span>
-          <span className="hidden sm:inline font-bold text-ink text-sm tracking-tight">COFA Passport</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`${basePath}/cofa-supports-logo.svg`}
+            alt="COFA Supports logo"
+            width={22}
+            height={22}
+          />
+          <span className="hidden sm:inline font-bold text-ink text-sm tracking-tight">COFA Supports</span>
         </div>
 
         <div className="flex items-center gap-0.5 sm:gap-1 ml-auto md:ml-4">
@@ -309,18 +315,25 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
       {/* ─── Section 6: Footer ─── */}
       <footer className="bg-ocean-deep text-white py-16 sm:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-8">
-          {/* Massive brand text */}
-          <h2
-            className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tighter leading-none mb-10"
-            style={{
-              background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(36,113,163,0.4) 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            COFA<br />PASSPORT
-          </h2>
+          {/* Logo + brand text */}
+          <div className="flex items-center gap-6 mb-10">
+            <img
+              src={`${basePath}/cofa-supports-logo.svg`}
+              alt="COFA Supports logo"
+              className="h-20 sm:h-28 lg:h-32 w-auto invert opacity-80"
+            />
+            <h2
+              className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tighter leading-none"
+              style={{
+                background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(36,113,163,0.4) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              COFA<br />SUPPORTS
+            </h2>
+          </div>
 
           {/* Status line */}
           <div className="flex items-center gap-2.5 mb-10">
@@ -359,7 +372,7 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
               application forms that must be printed and submitted to the appropriate passport office.
             </p>
             <p className="font-mono text-[10px] text-white/20 uppercase tracking-[0.15em]">
-              &copy; {new Date().getFullYear()} COFA Passport Services
+              &copy; {new Date().getFullYear()} COFA Supports
             </p>
           </div>
         </div>

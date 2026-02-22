@@ -1,4 +1,4 @@
-# COFA Passport Application
+# COFA Supports
 
 ## Overview
 
@@ -47,6 +47,7 @@ cofa-passport/
 ├── package.json              # Dependencies and scripts
 ├── public/
 │   ├── AmendedPassportApplication0001.pdf  # FSM Form 500B PDF template
+│   ├── cofa-supports-logo.svg # COFA Supports logo (footer branding)
 │   ├── passport-fsm.webp     # FSM passport cover image (landing page)
 │   ├── passport-rmi.png      # RMI passport cover image (landing page)
 │   └── passport-palau.png    # Palau passport cover image (landing page)

@@ -34,19 +34,16 @@ export default function Sidebar({
       {/* Branding */}
       <div className="p-6 border-b border-ocean/8">
         <div className="flex items-center gap-3">
-          <svg width="40" height="40" viewBox="0 0 40 40" className="flex-shrink-0">
-            <circle cx="20" cy="20" r="19" fill="none" stroke="#1B4F72" strokeWidth="1.5" />
-            {[
-              [20, 8],
-              [20, 32],
-              [8, 20],
-              [32, 20],
-            ].map(([cx, cy], i) => (
-              <circle key={i} cx={cx} cy={cy} r="2.5" fill="#1B4F72" />
-            ))}
-          </svg>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/cofa-supports-logo.svg`}
+            alt="COFA Supports logo"
+            width={40}
+            height={40}
+            className="flex-shrink-0"
+          />
           <div>
-            <h1 className="text-lg font-bold text-ink leading-tight">FSM Passport</h1>
+            <h1 className="text-lg font-bold text-ink leading-tight">COFA Supports</h1>
             <p className="text-xs text-muted">Form 500B</p>
           </div>
         </div>
