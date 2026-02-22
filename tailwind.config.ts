@@ -34,6 +34,8 @@ const config: Config = {
       boxShadow: {
         hard: '4px 4px 0 #1B4F72',
         'hard-sm': '2px 2px 0 #1B4F72',
+        card: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(27,79,114,0.06)',
+        'card-hover': '0 4px 16px rgba(27,79,114,0.12)',
         premium: '0 20px 40px -15px rgba(27, 79, 114, 0.25)',
         'premium-hover': '0 30px 60px -15px rgba(27, 79, 114, 0.4)',
         'glow-ocean': '0 0 40px -10px rgba(36, 113, 163, 0.5)',
@@ -59,12 +61,17 @@ const config: Config = {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
         },
+        'step-enter': {
+          '0%': { opacity: '0', transform: 'translateY(12px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         float: 'float 6s ease-in-out infinite',
         glow: 'glow 4s ease-in-out infinite',
         'spin-slow': 'spin-slow 12s linear infinite',
+        'step-enter': 'step-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
       },
     },
   },

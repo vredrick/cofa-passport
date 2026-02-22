@@ -33,7 +33,7 @@ export default function Wizard({ currentStep, goToStep, markCompleteAndAdvance }
   }, []);
 
   return (
-    <div>
+    <div key={currentStep} className="step-animate-in">
       {currentStep === 0 && (
         <PassportTypeStep
           value={formData.passportType}

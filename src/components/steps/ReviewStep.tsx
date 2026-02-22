@@ -11,7 +11,8 @@ interface ReviewStepProps {
 }
 
 function formatAddress(addr: Address): string {
-  return [addr.street, addr.city, addr.state, addr.zip, addr.country]
+  const street = [addr.street, addr.unit].map(s => s.trim()).filter(Boolean).join(', ');
+  return [street, addr.city, addr.state, addr.zip, addr.country]
     .map(s => s.trim()).filter(Boolean).join(', ');
 }
 
@@ -25,7 +26,8 @@ function Section({ title, onEdit, children }: { title: string; onEdit: () => voi
     <div className="card-hard">
       <div className="flex items-center justify-between">
         <h3 className="card-title">{title}</h3>
-        <button type="button" onClick={onEdit} className="text-base font-semibold text-ocean underline hover:text-ocean-light transition-colors">
+        <button type="button" onClick={onEdit} className="flex items-center gap-1 text-sm font-semibold text-ocean hover:text-ocean-light transition-colors">
+          <span className="material-symbols-outlined text-[16px]">edit</span>
           Edit
         </button>
       </div>
@@ -38,7 +40,7 @@ function Field({ label, value }: { label: string; value: string }) {
   if (!value) return null;
   return (
     <div>
-      <dt className="text-sm text-muted uppercase tracking-wider font-bold">{label}</dt>
+      <dt className="text-xs text-muted uppercase tracking-wider font-semibold">{label}</dt>
       <dd className="text-lg text-ink font-medium mt-0.5">{value}</dd>
     </div>
   );
@@ -163,18 +165,18 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
     return (
       <div className="space-y-6">
         <div>
-          <h2 className="text-4xl font-bold tracking-tight text-ink">Your Application is Ready</h2>
+          <h2 className="text-4xl font-bold tracking-tight text-ink">Your Application is <span className="font-serif italic text-ocean">Ready</span></h2>
           <p className="text-lg text-muted mt-2">Please review your completed passport application PDF below.</p>
         </div>
 
         <iframe
           src={pdfUrl}
-          className="w-full h-[80vh] min-h-[600px] rounded-lg border-[3px] border-ocean/20"
+          className="w-full h-[80vh] min-h-[600px] rounded-2xl border border-ocean/15 shadow-card"
           title="PDF Preview"
         />
 
         {/* Sticky bottom bar */}
-        <div className="sticky bottom-0 z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 bg-surface border-t border-ocean/10 py-4 space-y-3">
+        <div className="sticky-nav-glass -mx-4 px-4 sm:-mx-8 sm:px-8 space-y-3">
           <div className="flex flex-col sm:flex-row gap-3">
             <button type="button" onClick={handleDownload} className="btn-primary flex-1">
               <span className="flex items-center justify-center gap-2">
@@ -207,7 +209,7 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-4xl font-bold tracking-tight text-ink">Review Your Application</h2>
+        <h2 className="text-4xl font-bold tracking-tight text-ink">Review Your <span className="font-serif italic text-ocean">Application</span></h2>
         <p className="text-lg text-muted mt-2">Please verify all information is correct before generating your PDF.</p>
       </div>
 
@@ -252,14 +254,14 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
       </Section>
 
       {status === 'error' && (
-        <div className="bg-error/5 border-[3px] border-error rounded-lg p-4 text-center">
+        <div className="bg-error/5 border border-error/30 rounded-2xl p-4 text-center">
           <p className="text-base text-error font-bold">PDF generation failed</p>
           <p className="text-sm text-error/80 mt-1">{errorMsg}</p>
         </div>
       )}
 
       {/* Sticky bottom bar */}
-      <div className="sticky bottom-0 z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 bg-surface border-t border-ocean/10 py-4 space-y-3">
+      <div className="sticky-nav-glass -mx-4 px-4 sm:-mx-8 sm:px-8 space-y-3">
         {hasCachedPdf && !dataChanged ? (
           <button type="button" onClick={() => { setShowPreview(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="btn-primary">
             <span className="flex items-center justify-center gap-2">

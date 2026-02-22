@@ -17,10 +17,10 @@ export default function YesNoToggle({ label, value, onChange, error }: YesNoTogg
         <button
           type="button"
           onClick={() => onChange(value === 'yes' ? '' : 'yes')}
-          className={`flex-1 h-[56px] rounded-lg border-[3px] font-bold text-base transition-colors focus:outline-none focus:ring-4 focus:ring-gold-focus ${
+          className={`flex-1 h-[56px] rounded-xl border font-bold text-base transition-all focus:outline-none focus:ring-4 focus:ring-gold-focus ${
             value === 'yes'
-              ? 'border-ocean bg-ocean text-white'
-              : 'border-gray-300 bg-white text-ink hover:border-ocean/50'
+              ? 'border-ocean bg-ocean text-white shadow-md'
+              : 'border-ocean/15 bg-white text-ink hover:border-ocean/40 hover:shadow-sm'
           }`}
         >
           Yes
@@ -28,10 +28,10 @@ export default function YesNoToggle({ label, value, onChange, error }: YesNoTogg
         <button
           type="button"
           onClick={() => onChange(value === 'no' ? '' : 'no')}
-          className={`flex-1 h-[56px] rounded-lg border-[3px] font-bold text-base transition-colors focus:outline-none focus:ring-4 focus:ring-gold-focus ${
+          className={`flex-1 h-[56px] rounded-xl border font-bold text-base transition-all focus:outline-none focus:ring-4 focus:ring-gold-focus ${
             value === 'no'
-              ? 'border-ocean bg-ocean text-white'
-              : 'border-gray-300 bg-white text-ink hover:border-ocean/50'
+              ? 'border-ocean bg-ocean text-white shadow-md'
+              : 'border-ocean/15 bg-white text-ink hover:border-ocean/40 hover:shadow-sm'
           }`}
         >
           No

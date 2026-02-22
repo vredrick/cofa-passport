@@ -5,6 +5,7 @@ export type CitizenshipMethod = '' | 'birth' | 'naturalization' | 'other';
 
 export interface Address {
   street: string;
+  unit: string;
   city: string;
   state: string;
   zip: string;
@@ -66,6 +67,7 @@ export interface ValidationErrors {
 
 export const INITIAL_ADDRESS: Address = {
   street: '',
+  unit: '',
   city: '',
   state: '',
   zip: '',

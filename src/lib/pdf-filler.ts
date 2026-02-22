@@ -69,7 +69,8 @@ function checkBox(form: ReturnType<PDFDocument['getForm']>, id: string, page: PD
 }
 
 function formatAddress(addr: Address): string {
-  return [addr.street, addr.city, addr.state, addr.zip, addr.country]
+  const street = [addr.street, addr.unit].map(s => s.trim()).filter(Boolean).join(', ');
+  return [street, addr.city, addr.state, addr.zip, addr.country]
     .map(s => s.trim()).filter(Boolean).join(', ');
 }
 

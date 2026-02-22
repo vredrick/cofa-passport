@@ -48,6 +48,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-surface flex flex-col lg:flex-row">
+      <div className="noise-overlay" />
       <Sidebar
         currentStep={currentStep}
         completedSteps={completedSteps}

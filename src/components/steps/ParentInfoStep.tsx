@@ -42,18 +42,17 @@ export default function ParentInfoStep({ parentLabel, data, onChange, onNext, on
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-4xl font-bold tracking-tight text-ink">{parentLabel}&apos;s Information</h2>
+        <h2 className="text-4xl font-bold tracking-tight text-ink">{parentLabel}&apos;s <span className="font-serif italic text-ocean">Information</span></h2>
         <p className="text-lg text-muted mt-2">Enter your {parentLabel.toLowerCase()}&apos;s details.</p>
       </div>
 
       <div className="card">
         <h3 className="card-title">Full Name</h3>
-        <TextInput label="First Name" value={data.firstName} onChange={(v) => update('firstName', v)} error={errors.firstName} placeholder="SAU" required />
-        <TextInput label="Middle Name" value={data.middleName} onChange={(v) => update('middleName', v)} placeholder="SANTOS" />
-        <TextInput label="Last Name" value={data.lastName} onChange={(v) => update('lastName', v)} error={errors.lastName} placeholder="ROBERT" required />
+        <TextInput label="First Name" value={data.firstName} onChange={(v) => update('firstName', v)} error={errors.firstName} placeholder="First name" required />
+        <TextInput label="Middle Name" value={data.middleName} onChange={(v) => update('middleName', v)} placeholder="Middle name (optional)" />
+        <TextInput label="Last Name" value={data.lastName} onChange={(v) => update('lastName', v)} error={errors.lastName} placeholder="Last name" required />
       </div>
 
-      <hr className="border-surface" />
 
       <div className="card">
         <h3 className="card-title">Birth Information</h3>
@@ -61,7 +60,6 @@ export default function ParentInfoStep({ parentLabel, data, onChange, onNext, on
         <TextInput label="Place of Birth" value={data.birthPlace} onChange={(v) => update('birthPlace', v)} placeholder="WENO, CHUUK" />
       </div>
 
-      <hr className="border-surface" />
 
       <div className="card">
         <h3 className="card-title">Citizenship</h3>
@@ -71,7 +69,7 @@ export default function ParentInfoStep({ parentLabel, data, onChange, onNext, on
         )}
       </div>
 
-      <div className="sticky bottom-0 z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 bg-surface border-t border-ocean/10 py-4 flex gap-3">
+      <div className="sticky-nav-glass -mx-4 px-4 sm:-mx-8 sm:px-8 flex gap-3">
         <button type="button" onClick={onBack} className="btn-secondary">
           Back
         </button>

@@ -8,7 +8,7 @@ export default function PrivacyNotice() {
   if (dismissed) return null;
 
   return (
-    <div className="bg-surface border-l-4 border-ocean rounded-r-lg p-4 flex items-start gap-3">
+    <div className="bg-white rounded-2xl border border-ocean/8 shadow-card p-4 flex items-start gap-3">
       <span className="material-symbols-outlined text-ocean text-[22px] flex-shrink-0 mt-0.5">
         shield_lock
       </span>
@@ -19,7 +19,7 @@ export default function PrivacyNotice() {
       </div>
       <button
         onClick={() => setDismissed(true)}
-        className="text-muted hover:text-ink p-1 transition-colors"
+        className="text-muted hover:text-ink p-1 rounded-lg hover:bg-surface transition-all"
         aria-label="Dismiss notice"
       >
         <span className="material-symbols-outlined text-[20px]">close</span>

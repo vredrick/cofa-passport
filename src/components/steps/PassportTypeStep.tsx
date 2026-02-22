@@ -43,10 +43,10 @@ export default function PassportTypeStep({ value, onChange, onNext }: PassportTy
               onChange(option.value as PassportType);
               if (errors.passportType) setErrors({});
             }}
-            className={`flex flex-col items-center text-center p-6 rounded-xl border-[3px] transition-all focus:outline-none focus:ring-4 focus:ring-gold-focus ${
+            className={`flex flex-col items-center text-center p-6 rounded-2xl border transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gold-focus ${
               value === option.value
-                ? 'border-ocean shadow-hard bg-white'
-                : 'border-gray-200 bg-white hover:border-ocean/50'
+                ? 'bg-ocean/5 shadow-card-hover ring-1 ring-ocean/20 border-ocean/20'
+                : 'border-ocean/10 bg-white shadow-card hover:shadow-card-hover hover:-translate-y-0.5'
             }`}
           >
             <span
@@ -68,7 +68,7 @@ export default function PassportTypeStep({ value, onChange, onNext }: PassportTy
         <p className="error-text" role="alert">{errors.passportType}</p>
       )}
 
-      <div className="sticky bottom-0 z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 bg-surface border-t border-ocean/10 py-4">
+      <div className="sticky-nav-glass -mx-4 px-4 sm:-mx-8 sm:px-8">
         <button type="button" onClick={handleContinue} className="btn-primary">
           Continue
         </button>

@@ -4,40 +4,48 @@
 
 @layer components {
   .btn-primary {
-    @apply w-full h-14 px-6 bg-ocean text-white font-bold text-lg rounded-xl border border-white/10 hover:bg-ocean-light shadow-lg hover:-translate-y-0.5 active:bg-ocean-dark active:transform-none transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gold-focus disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none;
+    @apply w-full h-14 px-6 bg-ocean text-white font-bold text-lg rounded-2xl border border-white/10 hover:bg-ocean-light hover:scale-[1.01] shadow-lg hover:shadow-xl active:bg-ocean-dark active:scale-100 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gold-focus disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none;
     background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-  }
-  .btn-primary:hover {
-    box-shadow: 0 0 40px -10px rgba(36, 113, 163, 0.5);
   }
 
   .btn-secondary {
-    @apply w-full h-14 px-6 bg-surface text-ocean font-bold text-lg rounded-xl border-2 border-ocean/20 hover:bg-ocean hover:text-white hover:border-transparent hover:shadow-lg hover:-translate-y-0.5 active:bg-ocean-dark active:text-white active:transform-none transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gold-focus;
+    @apply w-full h-14 px-6 bg-white text-ocean font-bold text-lg rounded-2xl border border-ocean/15 hover:border-ocean/30 hover:shadow-md hover:scale-[1.01] active:scale-100 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gold-focus;
   }
 
   .form-input {
-    @apply w-full h-[56px] px-4 py-3 bg-surface border-[3px] border-ocean rounded-lg text-ink text-lg focus:outline-none focus:ring-4 focus:ring-gold-focus focus:border-ocean placeholder:text-muted/60;
+    @apply w-full h-[56px] px-4 py-3 bg-white border border-ocean/20 rounded-xl text-ink text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-gold-focus/30 focus:border-ocean focus:shadow-sm placeholder:text-muted/40;
   }
 
   .form-input-error {
-    @apply border-error focus:ring-error/30;
+    @apply border-error/60 focus:ring-error/20;
   }
 
   .card {
-    @apply bg-white rounded-xl border-[3px] border-ocean/10 p-6 space-y-5;
+    @apply bg-white rounded-2xl border border-ocean/10 p-6 space-y-5 shadow-card;
   }
 
   .card-title {
-    @apply text-lg font-bold text-ocean uppercase tracking-wide;
+    @apply text-sm font-bold text-ocean uppercase tracking-wider;
   }
 
   .card-hard {
-    @apply bg-white rounded-xl border-[3px] border-ocean p-6 space-y-5 shadow-hard;
+    @apply bg-white rounded-2xl border border-ocean/10 p-6 space-y-5 shadow-card hover:shadow-card-hover transition-shadow duration-300;
   }
 
   .error-text {
     @apply text-error text-sm font-medium mt-1;
   }
+}
+
+.sticky-nav-glass {
+  @apply sticky bottom-0 z-10 py-4 border-t border-ocean/10;
+  background: rgba(240, 244, 248, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.step-animate-in {
+  animation: step-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 body {

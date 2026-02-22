@@ -32,7 +32,7 @@ export default function Sidebar({
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Branding */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-6 border-b border-ocean/8">
         <div className="flex items-center gap-3">
           <svg width="40" height="40" viewBox="0 0 40 40" className="flex-shrink-0">
             <circle cx="20" cy="20" r="19" fill="none" stroke="#1B4F72" strokeWidth="1.5" />
@@ -86,9 +86,9 @@ export default function Sidebar({
                     }
                   }}
                   disabled={!clickable}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 ${
                     active
-                      ? 'bg-ocean text-white'
+                      ? 'bg-ocean/8 text-ocean border-l-[3px] border-ocean'
                       : completed
                       ? 'text-ocean hover:bg-ocean/5 cursor-pointer'
                       : clickable
@@ -108,7 +108,7 @@ export default function Sidebar({
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-ocean/8">
         <div className="flex items-center gap-2 text-xs text-muted">
           <span className="material-symbols-outlined text-[16px]">shield_lock</span>
           <span>All data stays in your browser</span>
@@ -120,7 +120,7 @@ export default function Sidebar({
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col w-80 bg-white border-r border-gray-200 h-screen sticky top-0 flex-shrink-0">
+      <aside className="hidden lg:flex flex-col w-80 bg-white/80 backdrop-blur-xl border-r border-ocean/8 h-screen sticky top-0 flex-shrink-0">
         {sidebarContent}
       </aside>
 
@@ -128,10 +128,10 @@ export default function Sidebar({
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex justify-end">
           <div
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={onMobileClose}
           />
-          <aside className="relative w-80 max-w-[85vw] bg-white h-full shadow-xl animate-slide-in-right">
+          <aside className="relative w-80 max-w-[85vw] bg-white/95 backdrop-blur-xl h-full shadow-2xl rounded-l-2xl animate-slide-in-right">
             <button
               type="button"
               onClick={onMobileClose}
