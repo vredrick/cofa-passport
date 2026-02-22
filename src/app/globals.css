@@ -4,8 +4,11 @@
 
 @layer components {
   .btn-primary {
-    @apply w-full h-14 px-6 bg-ocean text-white font-bold text-lg rounded-xl border border-white/10 hover:bg-ocean-light shadow-lg hover:shadow-glow-ocean hover:-translate-y-0.5 active:bg-ocean-dark active:transform-none transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gold-focus disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none;
+    @apply w-full h-14 px-6 bg-ocean text-white font-bold text-lg rounded-xl border border-white/10 hover:bg-ocean-light shadow-lg hover:-translate-y-0.5 active:bg-ocean-dark active:transform-none transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gold-focus disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none;
     background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 40px -10px rgba(36, 113, 163, 0.5);
   }
 
   .btn-secondary {

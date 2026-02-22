@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FormData, Address, PreviousPassportInfo } from '@/types/form';
 import { fillPassportPdf, generateFilename, downloadPdf } from '@/lib/pdf-filler';
 
@@ -78,6 +78,13 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [shareSupported, setShareSupported] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const dataSnapshotRef = useRef<string | null>(null);
+
+  // Check if form data changed since the last generation
+  const currentDataJson = JSON.stringify(data);
+  const dataChanged = dataSnapshotRef.current !== null && dataSnapshotRef.current !== currentDataJson;
+  const hasCachedPdf = status === 'success' && pdfUrl !== null;
 
   useEffect(() => {
     setShareSupported(canShareFiles());
@@ -89,6 +96,13 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
       if (pdfUrl) URL.revokeObjectURL(pdfUrl);
     };
   }, [pdfUrl]);
+
+  // Scroll to top when PDF is ready
+  useEffect(() => {
+    if (status === 'success') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [status]);
 
   const handleGenerate = async () => {
     setStatus('generating');
@@ -102,6 +116,9 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
       setStatus('success');
+      setShowPreview(true);
+      // Snapshot the data used for this generation
+      dataSnapshotRef.current = JSON.stringify(data);
     } catch (e) {
       console.error('PDF generation failed:', e);
       setErrorMsg(e instanceof Error ? e.message : 'An unexpected error occurred');
@@ -141,6 +158,51 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
   const prevPassportValue = a.previousPassport === 'yes'
     ? `Yes — ${formatPrevPassport(a.previousPassportDetails)}`
     : a.previousPassport === 'no' ? 'No' : '';
+
+  if (showPreview && pdfUrl) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-4xl font-bold tracking-tight text-ink">Your Application is Ready</h2>
+          <p className="text-lg text-muted mt-2">Please review your completed passport application PDF below.</p>
+        </div>
+
+        <iframe
+          src={pdfUrl}
+          className="w-full h-[80vh] min-h-[600px] rounded-lg border-[3px] border-ocean/20"
+          title="PDF Preview"
+        />
+
+        {/* Sticky bottom bar */}
+        <div className="sticky bottom-0 z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 bg-surface border-t border-ocean/10 py-4 space-y-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button type="button" onClick={handleDownload} className="btn-primary flex-1">
+              <span className="flex items-center justify-center gap-2">
+                <span className="material-symbols-outlined text-[20px]">download</span>
+                Download PDF
+              </span>
+            </button>
+            {shareSupported && (
+              <button type="button" onClick={handleShare} className="btn-secondary flex-1">
+                <span className="flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined text-[20px]">share</span>
+                  Share PDF
+                </span>
+              </button>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowPreview(false)}
+            className="btn-secondary w-full"
+          >
+            Back to Edit Mode
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -189,20 +251,6 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
         <Field label="FSM Citizen" value={m.fsmCitizen === 'yes' ? 'Yes' : m.fsmCitizen === 'no' ? `No — ${m.nationality}` : ''} />
       </Section>
 
-      {/* PDF Preview (inline, not in sticky bar) */}
-      {status === 'success' && pdfUrl && (
-        <div className="space-y-3">
-          <div className="bg-ocean/5 border-[3px] border-ocean rounded-lg p-4 text-center">
-            <p className="text-base text-ocean font-bold">PDF generated successfully!</p>
-          </div>
-          <iframe
-            src={pdfUrl}
-            className="w-full h-[600px] rounded-lg border-[3px] border-ocean/20"
-            title="PDF Preview"
-          />
-        </div>
-      )}
-
       {status === 'error' && (
         <div className="bg-error/5 border-[3px] border-error rounded-lg p-4 text-center">
           <p className="text-base text-error font-bold">PDF generation failed</p>
@@ -212,9 +260,18 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
 
       {/* Sticky bottom bar */}
       <div className="sticky bottom-0 z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 bg-surface border-t border-ocean/10 py-4 space-y-3">
-        {status === 'idle' && (
+        {hasCachedPdf && !dataChanged ? (
+          <button type="button" onClick={() => { setShowPreview(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="btn-primary">
+            <span className="flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+              View Generated PDF
+            </span>
+          </button>
+        ) : (status === 'idle' || status === 'error' || (hasCachedPdf && dataChanged)) && (
           <button type="button" onClick={handleGenerate} className="btn-primary">
-            Generate PDF Application
+            {hasCachedPdf && dataChanged
+              ? 'Regenerate PDF (data changed)'
+              : status === 'error' ? 'Try Again' : 'Generate PDF Application'}
           </button>
         )}
 
@@ -225,25 +282,6 @@ export default function ReviewStep({ data, onEdit, onBack }: ReviewStepProps) {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
             Generating PDF...
-          </button>
-        )}
-
-        {status === 'success' && pdfUrl && (
-          <div className="flex gap-3">
-            <button type="button" onClick={handleDownload} className="btn-primary">
-              Download PDF
-            </button>
-            {shareSupported && (
-              <button type="button" onClick={handleShare} className="btn-secondary">
-                Share PDF
-              </button>
-            )}
-          </div>
-        )}
-
-        {status === 'error' && (
-          <button type="button" onClick={handleGenerate} className="btn-primary">
-            Try Again
           </button>
         )}
 
