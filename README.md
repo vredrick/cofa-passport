@@ -80,9 +80,9 @@ public/
 
 The app fills the official government PDF template and produces a **static, non-editable PDF** that renders identically in all viewers (Chrome, Safari, Mac Preview, Adobe Reader, etc.).
 
-- **Text fields**: filled via `pdf-lib` `setText()` with appearance updates
+- **Text fields**: drawn directly on the page via `page.drawText()` at 8pt Helvetica with auto-shrink — bypasses form-field font-size limitations for reliable rendering across all viewers
 - **Checkboxes**: drawn directly on the page as vector checkmarks (Chrome's PDF viewer does not render form-field checkbox appearances)
-- **AcroForm removal**: the interactive form layer is stripped to produce a clean, static document
+- **Field coordinates**: mapped from the template's AcroForm widget rectangles (see `FIELD_POS` in `pdf-filler.ts`)
 
 ## Adding a New Nation
 

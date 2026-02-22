@@ -1,21 +1,38 @@
-import { PDFDocument, PDFName, PDFPage, rgb } from 'pdf-lib';
+import { PDFDocument, PDFFont, PDFName, PDFPage, rgb, StandardFonts } from 'pdf-lib';
 import { FIELD_IDS } from './field-mapping';
 import { FormData, Address, PreviousPassportInfo } from '@/types/form';
 
-function setTextField(form: ReturnType<PDFDocument['getForm']>, id: string, value: string, uppercase = true) {
-  try {
-    if (!value.trim()) return;
-    const field = form.getTextField(id);
-    field.setText(uppercase ? value.toUpperCase() : value);
-  } catch (e) {
-    console.warn(`Failed to set text field ${id}:`, e);
+/**
+ * Draw text directly on the PDF page at specified coordinates.
+ * Bypasses form-field font-size limitations and gives full control
+ * over positioning and text size.
+ *
+ * Auto-shrinks the font if the text exceeds maxWidth.
+ */
+function drawDirectText(
+  page: PDFPage,
+  font: PDFFont,
+  text: string,
+  x: number,
+  y: number,
+  fontSize: number,
+  maxWidth: number,
+  uppercase = true,
+) {
+  if (!text.trim()) return;
+  const value = uppercase ? text.toUpperCase() : text;
+
+  // Auto-shrink if the text exceeds the available width
+  let size = fontSize;
+  while (size > 5 && font.widthOfTextAtSize(value, size) > maxWidth) {
+    size -= 0.5;
   }
+
+  page.drawText(value, { x, y, size, font, color: rgb(0, 0, 0) });
 }
 
 /**
  * Draw a checkmark directly on the PDF page at the checkbox widget's position.
- * This renders reliably in all viewers (Chrome, Mac Preview, Adobe, etc.)
- * unlike form field appearance streams which Chrome ignores for checkboxes.
  */
 function checkBox(form: ReturnType<PDFDocument['getForm']>, id: string, page: PDFPage) {
   try {
@@ -35,13 +52,13 @@ function checkBox(form: ReturnType<PDFDocument['getForm']>, id: string, page: PD
 
       page.drawLine({
         start: { x: x + w * 0.15, y: y + h * 0.45 },
-        end:   { x: x + w * 0.4,  y: y + h * 0.15 },
+        end: { x: x + w * 0.4, y: y + h * 0.15 },
         thickness: 1.2,
         color: rgb(0, 0, 0),
       });
       page.drawLine({
-        start: { x: x + w * 0.4,  y: y + h * 0.15 },
-        end:   { x: x + w * 0.85, y: y + h * 0.85 },
+        start: { x: x + w * 0.4, y: y + h * 0.15 },
+        end: { x: x + w * 0.85, y: y + h * 0.85 },
         thickness: 1.2,
         color: rgb(0, 0, 0),
       });
@@ -61,6 +78,43 @@ function formatPreviousPassport(d: PreviousPassportInfo): string {
     .map(s => s.trim()).filter(Boolean).join(', ');
 }
 
+// ── Field coordinates from PDF template (612 × 792 pt page) ──────────────
+// Each entry: [x, y, maxWidth]  – y is the bottom edge of the field rect.
+// We add +2 to y for baseline offset so text sits in the middle of the field.
+const FIELD_POS = {
+  LAST_NAME: { x: 77, y: 599, w: 152 },
+  MIDDLE_NAME: { x: 247, y: 599, w: 76 },
+  FIRST_NAME: { x: 351, y: 598, w: 194 },
+  OTHER_NAMES: { x: 149, y: 572, w: 372 },
+  DATE_OF_BIRTH: { x: 93, y: 552, w: 98 },
+  HEIGHT_FEET: { x: 73, y: 536, w: 69 },
+  HEIGHT_INCHES: { x: 160, y: 536, w: 45 },
+  HAIR_COLOR: { x: 315, y: 535, w: 69 },
+  EYE_COLOR: { x: 455, y: 534, w: 69 },
+  BIRTH_PLACE: { x: 85, y: 518, w: 111 },
+  HOME_ADDRESS: { x: 260, y: 517, w: 350 },
+  POSTAL_ADDRESS: { x: 127, y: 499, w: 480 },
+  EMAIL: { x: 101, y: 481, w: 220 },
+  PHONE: { x: 415, y: 479, w: 112 },
+  PREV_PASSPORT_DETAILS: { x: 245, y: 443, w: 279 },
+  CONVICTED_EXPLAIN: { x: 326, y: 422, w: 220 },
+  NAME_CHANGED_EXPLAIN: { x: 286, y: 405, w: 220 },
+  FATHER_LAST: { x: 83, y: 352, w: 138 },
+  FATHER_FIRST: { x: 265, y: 351, w: 138 },
+  FATHER_MIDDLE: { x: 452, y: 349, w: 98 },
+  FATHER_BIRTHDATE: { x: 79, y: 333, w: 98 },
+  FATHER_BIRTHPLACE: { x: 239, y: 332, w: 152 },
+  FATHER_NATIONALITY: { x: 118, y: 314, w: 287 },
+  MOTHER_LAST: { x: 84, y: 278, w: 138 },
+  MOTHER_FIRST: { x: 267, y: 277, w: 138 },
+  MOTHER_MIDDLE: { x: 454, y: 275, w: 98 },
+  MOTHER_BIRTHDATE: { x: 80, y: 260, w: 98 },
+  MOTHER_BIRTHPLACE: { x: 237, y: 259, w: 152 },
+  MOTHER_NATIONALITY: { x: 119, y: 242, w: 287 },
+} as const;
+
+const FONT_SIZE = 8;
+
 export async function fillPassportPdf(data: FormData): Promise<Uint8Array> {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const templateUrl = `${window.location.origin}${basePath}/AmendedPassportApplication0001.pdf`;
@@ -69,6 +123,15 @@ export async function fillPassportPdf(data: FormData): Promise<Uint8Array> {
   const form = pdfDoc.getForm();
   const page = pdfDoc.getPage(0);
 
+  // Embed a standard font for all text drawing
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+  /** Shorthand: draw field at its known position */
+  const draw = (field: keyof typeof FIELD_POS, text: string, uppercase = true) => {
+    const p = FIELD_POS[field];
+    drawDirectText(page, font, text, p.x, p.y, FONT_SIZE, p.w, uppercase);
+  };
+
   // --- Passport Type ---
   if (data.passportType === 'ordinary') checkBox(form, FIELD_IDS.TYPE_ORDINARY, page);
   if (data.passportType === 'official') checkBox(form, FIELD_IDS.TYPE_OFFICIAL, page);
@@ -76,11 +139,11 @@ export async function fillPassportPdf(data: FormData): Promise<Uint8Array> {
 
   // --- Applicant Info ---
   const a = data.applicant;
-  setTextField(form, FIELD_IDS.LAST_NAME, a.lastName);
-  setTextField(form, FIELD_IDS.MIDDLE_NAME, a.middleName);
-  setTextField(form, FIELD_IDS.FIRST_NAME, a.firstName);
-  setTextField(form, FIELD_IDS.OTHER_NAMES, a.otherNames);
-  setTextField(form, FIELD_IDS.DATE_OF_BIRTH, a.dateOfBirth);
+  draw('LAST_NAME', a.lastName);
+  draw('MIDDLE_NAME', a.middleName);
+  draw('FIRST_NAME', a.firstName);
+  draw('OTHER_NAMES', a.otherNames);
+  draw('DATE_OF_BIRTH', a.dateOfBirth);
 
   // Gender
   if (a.gender === 'miss') checkBox(form, FIELD_IDS.GENDER_MISS, page);
@@ -89,24 +152,24 @@ export async function fillPassportPdf(data: FormData): Promise<Uint8Array> {
   if (a.gender === 'mr') checkBox(form, FIELD_IDS.GENDER_MR, page);
 
   // Physical
-  setTextField(form, FIELD_IDS.HEIGHT_FEET, a.heightFeet);
-  setTextField(form, FIELD_IDS.HEIGHT_INCHES, a.heightInches);
-  setTextField(form, FIELD_IDS.HAIR_COLOR, a.hairColor);
-  setTextField(form, FIELD_IDS.EYE_COLOR, a.eyeColor);
+  draw('HEIGHT_FEET', a.heightFeet);
+  draw('HEIGHT_INCHES', a.heightInches);
+  draw('HAIR_COLOR', a.hairColor);
+  draw('EYE_COLOR', a.eyeColor);
 
   // Addresses
-  setTextField(form, FIELD_IDS.BIRTH_PLACE, a.birthPlace);
-  setTextField(form, FIELD_IDS.HOME_ADDRESS, formatAddress(a.homeAddress));
-  setTextField(form, FIELD_IDS.POSTAL_ADDRESS, formatAddress(a.shippingAddressSameAsHome ? a.homeAddress : a.shippingAddress));
+  draw('BIRTH_PLACE', a.birthPlace);
+  draw('HOME_ADDRESS', formatAddress(a.homeAddress));
+  draw('POSTAL_ADDRESS', formatAddress(a.shippingAddressSameAsHome ? a.homeAddress : a.shippingAddress));
 
   // Contact — email NOT uppercased
-  setTextField(form, FIELD_IDS.EMAIL, a.email, false);
-  setTextField(form, FIELD_IDS.PHONE, a.phone);
+  draw('EMAIL', a.email, false);
+  draw('PHONE', a.phone);
 
   // Previous Passport
   if (a.previousPassport === 'yes') {
     checkBox(form, FIELD_IDS.PREV_PASSPORT_YES, page);
-    setTextField(form, FIELD_IDS.PREV_PASSPORT_DETAILS, formatPreviousPassport(a.previousPassportDetails));
+    draw('PREV_PASSPORT_DETAILS', formatPreviousPassport(a.previousPassportDetails));
   } else if (a.previousPassport === 'no') {
     checkBox(form, FIELD_IDS.PREV_PASSPORT_NO, page);
   }
@@ -114,7 +177,7 @@ export async function fillPassportPdf(data: FormData): Promise<Uint8Array> {
   // Convicted
   if (a.convicted === 'yes') {
     checkBox(form, FIELD_IDS.CONVICTED_YES, page);
-    setTextField(form, FIELD_IDS.CONVICTED_EXPLAIN, a.convictedExplanation);
+    draw('CONVICTED_EXPLAIN', a.convictedExplanation);
   } else if (a.convicted === 'no') {
     checkBox(form, FIELD_IDS.CONVICTED_NO, page);
   }
@@ -122,7 +185,7 @@ export async function fillPassportPdf(data: FormData): Promise<Uint8Array> {
   // Name Changed
   if (a.nameChanged === 'yes') {
     checkBox(form, FIELD_IDS.NAME_CHANGED_YES, page);
-    setTextField(form, FIELD_IDS.NAME_CHANGED_EXPLAIN, a.nameChangedExplanation);
+    draw('NAME_CHANGED_EXPLAIN', a.nameChangedExplanation);
   } else if (a.nameChanged === 'no') {
     checkBox(form, FIELD_IDS.NAME_CHANGED_NO, page);
   }
@@ -134,38 +197,33 @@ export async function fillPassportPdf(data: FormData): Promise<Uint8Array> {
 
   // --- Father ---
   const f = data.father;
-  setTextField(form, FIELD_IDS.FATHER_LAST, f.lastName);
-  setTextField(form, FIELD_IDS.FATHER_FIRST, f.firstName);
-  setTextField(form, FIELD_IDS.FATHER_MIDDLE, f.middleName);
-  setTextField(form, FIELD_IDS.FATHER_BIRTHDATE, f.birthDate);
-  setTextField(form, FIELD_IDS.FATHER_BIRTHPLACE, f.birthPlace);
+  draw('FATHER_LAST', f.lastName);
+  draw('FATHER_FIRST', f.firstName);
+  draw('FATHER_MIDDLE', f.middleName);
+  draw('FATHER_BIRTHDATE', f.birthDate);
+  draw('FATHER_BIRTHPLACE', f.birthPlace);
   if (f.fsmCitizen === 'yes') {
     checkBox(form, FIELD_IDS.FATHER_FSM_YES, page);
   } else if (f.fsmCitizen === 'no') {
     checkBox(form, FIELD_IDS.FATHER_FSM_NO, page);
-    setTextField(form, FIELD_IDS.FATHER_NATIONALITY, f.nationality);
+    draw('FATHER_NATIONALITY', f.nationality);
   }
 
   // --- Mother ---
   const m = data.mother;
-  setTextField(form, FIELD_IDS.MOTHER_LAST, m.lastName);
-  setTextField(form, FIELD_IDS.MOTHER_FIRST, m.firstName);
-  setTextField(form, FIELD_IDS.MOTHER_MIDDLE, m.middleName);
-  setTextField(form, FIELD_IDS.MOTHER_BIRTHDATE, m.birthDate);
-  setTextField(form, FIELD_IDS.MOTHER_BIRTHPLACE, m.birthPlace);
+  draw('MOTHER_LAST', m.lastName);
+  draw('MOTHER_FIRST', m.firstName);
+  draw('MOTHER_MIDDLE', m.middleName);
+  draw('MOTHER_BIRTHDATE', m.birthDate);
+  draw('MOTHER_BIRTHPLACE', m.birthPlace);
   if (m.fsmCitizen === 'yes') {
     checkBox(form, FIELD_IDS.MOTHER_FSM_YES, page);
   } else if (m.fsmCitizen === 'no') {
     checkBox(form, FIELD_IDS.MOTHER_FSM_NO, page);
-    setTextField(form, FIELD_IDS.MOTHER_NATIONALITY, m.nationality);
+    draw('MOTHER_NATIONALITY', m.nationality);
   }
 
-  // Bake text fields into the page as static content
-  form.updateFieldAppearances();
-
-  // Make all fields read-only so the PDF is non-editable but text remains visible.
-  // (form.flatten() crashes on this template due to orphaned widget refs, and
-  // stripping the AcroForm removes font references that text appearance streams need.)
+  // Make all form fields read-only (they are now empty but still in the PDF)
   for (const field of form.getFields()) {
     field.enableReadOnly();
   }
