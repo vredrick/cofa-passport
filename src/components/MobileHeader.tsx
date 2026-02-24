@@ -5,13 +5,18 @@ const STEP_NAMES = ['Type', 'Applicant', 'Father', 'Mother', 'Review'];
 interface MobileHeaderProps {
   currentStep: number;
   onToggleSidebar: () => void;
+  onBackToLanding?: () => void;
 }
 
-export default function MobileHeader({ currentStep, onToggleSidebar }: MobileHeaderProps) {
+export default function MobileHeader({ currentStep, onToggleSidebar, onBackToLanding }: MobileHeaderProps) {
   return (
     <header className="lg:hidden sticky top-0 z-40 text-white" style={{ background: 'rgba(27, 79, 114, 0.92)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
       <div className="flex items-center justify-between px-4 h-16">
-        <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={onBackToLanding}
+          className={`flex items-center gap-2 ${onBackToLanding ? 'cursor-pointer hover:opacity-80 transition-opacity' : 'cursor-default'}`}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/cofa-supports-logo.svg`}
@@ -21,7 +26,7 @@ export default function MobileHeader({ currentStep, onToggleSidebar }: MobileHea
             className="invert brightness-200"
           />
           <span className="font-bold text-base">COFA Supports</span>
-        </div>
+        </button>
         <div className="flex items-center gap-2">
           <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/10">
             {STEP_NAMES[currentStep]} ({currentStep + 1}/5)

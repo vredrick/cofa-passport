@@ -39,7 +39,16 @@ export default function Sidebar({
     <div className="flex flex-col h-full">
       {/* Branding */}
       <div className="p-6 border-b border-ocean/8">
-        <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            if (onBackToLanding) {
+              onBackToLanding();
+              onMobileClose();
+            }
+          }}
+          className={`flex items-center gap-3 ${onBackToLanding ? 'cursor-pointer hover:opacity-80 transition-opacity' : 'cursor-default'}`}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/cofa-supports-logo.svg`}
@@ -48,25 +57,11 @@ export default function Sidebar({
             height={40}
             className="flex-shrink-0"
           />
-          <div>
+          <div className="text-left">
             <h1 className="text-lg font-bold text-ink leading-tight">COFA Supports</h1>
             <p className="text-xs text-muted">FSM Passport Application · Form 500B</p>
           </div>
-        </div>
-        {/* Desktop only: back to home link */}
-        {onBackToLanding && (
-          <button
-            type="button"
-            onClick={() => {
-              onBackToLanding();
-              onMobileClose();
-            }}
-            className="flex items-center gap-1 mt-3 px-3 py-2 text-sm font-semibold text-ocean bg-ocean/5 hover:bg-ocean/10 border border-ocean/15 rounded-lg transition-all duration-200"
-          >
-            <span className="material-symbols-outlined text-[18px]">home</span>
-            Back to Home
-          </button>
-        )}
+        </button>
       </div>
 
       {/* Step Navigation */}
