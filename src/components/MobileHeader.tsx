@@ -5,10 +5,9 @@ const STEP_NAMES = ['Type', 'Applicant', 'Father', 'Mother', 'Review'];
 interface MobileHeaderProps {
   currentStep: number;
   onToggleSidebar: () => void;
-  onBackToLanding?: () => void;
 }
 
-export default function MobileHeader({ currentStep, onToggleSidebar, onBackToLanding }: MobileHeaderProps) {
+export default function MobileHeader({ currentStep, onToggleSidebar }: MobileHeaderProps) {
   return (
     <header className="lg:hidden sticky top-0 z-40 text-white" style={{ background: 'rgba(27, 79, 114, 0.92)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
       <div className="flex items-center justify-between px-4 h-16">

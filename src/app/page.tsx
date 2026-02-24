@@ -60,7 +60,6 @@ export default function Home() {
       <MobileHeader
         currentStep={currentStep}
         onToggleSidebar={() => setMobileOpen((o) => !o)}
-        onBackToLanding={handleBackToLanding}
       />
       <main className="flex-1">
         <div className="max-w-[800px] mx-auto px-4 sm:px-8 py-8 space-y-6">
