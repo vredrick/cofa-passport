@@ -13,16 +13,6 @@ export default function MobileHeader({ currentStep, onToggleSidebar, onBackToLan
     <header className="lg:hidden sticky top-0 z-40 text-white" style={{ background: 'rgba(27, 79, 114, 0.92)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
       <div className="flex items-center justify-between px-4 h-16">
         <div className="flex items-center gap-2">
-          {onBackToLanding && (
-            <button
-              type="button"
-              onClick={onBackToLanding}
-              className="p-1 -ml-1 hover:bg-white/10 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gold-focus"
-              aria-label="Back to home"
-            >
-              <span className="material-symbols-outlined text-[24px]">arrow_back</span>
-            </button>
-          )}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/cofa-supports-logo.svg`}

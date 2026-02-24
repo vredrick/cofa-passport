@@ -26,8 +26,14 @@ export default function Sidebar({
 }: SidebarProps) {
   const isActive = (steps: number[]) => steps.includes(currentStep);
   const isCompleted = (steps: number[]) => steps.every((s) => completedSteps.has(s));
-  const isClickable = (steps: number[]) =>
-    isCompleted(steps) || steps.some((s) => s <= currentStep);
+  const isClickable = (steps: number[]) => {
+    // Review & Print (step 4) requires all prior steps completed
+    if (steps.includes(4)) {
+      return [0, 1, 2, 3].every((s) => completedSteps.has(s));
+    }
+    // All other steps are always clickable
+    return true;
+  };
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
@@ -44,7 +50,7 @@ export default function Sidebar({
           />
           <div>
             <h1 className="text-lg font-bold text-ink leading-tight">COFA Supports</h1>
-            <p className="text-xs text-muted">Form 500B</p>
+            <p className="text-xs text-muted">FSM Passport Application · Form 500B</p>
           </div>
         </div>
         {/* Desktop only: back to home link */}
@@ -55,9 +61,9 @@ export default function Sidebar({
               onBackToLanding();
               onMobileClose();
             }}
-            className="hidden lg:flex items-center gap-1 mt-3 text-sm font-semibold text-ocean hover:text-ocean-light transition-colors"
+            className="flex items-center gap-1 mt-3 px-3 py-2 text-sm font-semibold text-ocean bg-ocean/5 hover:bg-ocean/10 border border-ocean/15 rounded-lg transition-all duration-200"
           >
-            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span className="material-symbols-outlined text-[18px]">home</span>
             Back to Home
           </button>
         )}
@@ -104,6 +110,18 @@ export default function Sidebar({
         </ul>
       </nav>
 
+      {/* Download Blank Form */}
+      <div className="px-3 pb-2">
+        <a
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/AmendedPassportApplication0001.pdf`}
+          download="FSM-Form-500B.pdf"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-ocean hover:bg-ocean/5 transition-all duration-200"
+        >
+          <span className="material-symbols-outlined text-[22px]">download</span>
+          Download Blank Form
+        </a>
+      </div>
+
       {/* Footer */}
       <div className="p-4 border-t border-ocean/8">
         <div className="flex items-center gap-2 text-xs text-muted">
@@ -132,7 +150,7 @@ export default function Sidebar({
             <button
               type="button"
               onClick={onMobileClose}
-              className="absolute top-4 left-4 p-1 text-muted hover:text-ink"
+              className="absolute top-4 right-4 z-10 p-1 text-muted hover:text-ink"
               aria-label="Close menu"
             >
               <span className="material-symbols-outlined">close</span>
