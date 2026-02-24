@@ -102,14 +102,14 @@ cofa-passport/
 - **Landing view (`'landing'`):** Renders `<LandingPage>` — a multi-section landing page with floating pill navbar, hero with CTA, nation passport cards (FSM active, RMI/Palau coming soon), "The Old Way vs A Better Way" messaging, how-it-works steps, and footer. On mobile, nation cards scroll horizontally with snap-to-center; FSM appears first in DOM order, with CSS `order` classes repositioning it to center on desktop.
 - **Wizard view (`'wizard'`):** Renders the existing Sidebar + MobileHeader + Wizard layout for FSM Form 500B.
 
-Clicking "Passport Renewal" or "Start Application" in the landing page/modal sets view to `'wizard'`. The Sidebar (desktop only) and MobileHeader each accept an optional `onBackToLanding` prop that returns the user to the landing view. On mobile, the back arrow in the MobileHeader handles navigation home; the mobile drawer is purely for step tracking.
+Clicking "Passport Renewal" or "Start Application" in the landing page/modal sets view to `'wizard'`. The Sidebar accepts an optional `onBackToLanding` prop and renders a "Back to Home" button (with home icon) under the branding in both the desktop sidebar and mobile drawer.
 
 ### Layout Architecture
 
 The wizard view uses a sidebar + content layout:
 
 - **Desktop (lg+):** Fixed sidebar (`w-80`) on the left with vertical step navigation; main content area centered at `max-w-[800px]`.
-- **Mobile (<lg):** Sticky `MobileHeader` with back arrow (left) and hamburger menu (right); drawer slides in from the right as a step-tracking overlay. The `slide-in-right` animation is defined in `globals.css`.
+- **Mobile (<lg):** Sticky `MobileHeader` with logo/title (left) and hamburger menu (right); drawer slides in from the right with step navigation, "Back to Home" button, and "Download Blank Form" link. The `slide-in-right` animation is defined in `globals.css`.
 - **Navigation state** (`currentStep`, `completedSteps`, `goToStep`, `markCompleteAndAdvance`) lives in `page.tsx` and is passed as props to both `Sidebar` and `Wizard`.
 
 The sidebar maps 5 internal wizard steps to 4 visual items:
@@ -182,6 +182,12 @@ Date format: `MM/DD/YYYY`. The `formatDateInput()` helper auto-inserts slashes a
 Field IDs are defined in `src/lib/field-mapping.ts` as the `FIELD_IDS` constant. These IDs were extracted from the template's AcroForm dictionary and look like `text_4dr`, `checkbox_57vsoy`, etc.
 
 ## Development Guidelines
+
+### Commit & Deploy
+
+- **Always verify the build before pushing.** Run `npm run build` locally after making changes. The GitHub Pages deploy will fail if ESLint or TypeScript errors exist (e.g., unused variables, missing props). Fix all errors before committing.
+- **Push triggers deploy.** Pushing to `main` automatically triggers the GitHub Actions workflow that builds and deploys to GitHub Pages. Always push after committing so changes go live.
+- **Check deploy status.** After pushing, run `gh run list --limit 2` to confirm the deploy workflow succeeds. If it fails, check logs with `gh run view <run-id> --log-failed`, fix the issue, and push again.
 
 ### Code Conventions
 
