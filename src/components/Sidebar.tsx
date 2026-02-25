@@ -62,6 +62,19 @@ export default function Sidebar({
             <p className="text-xs text-muted">FSM Passport Application · Form 500B</p>
           </div>
         </button>
+        {onBackToLanding && (
+          <button
+            type="button"
+            onClick={() => {
+              onBackToLanding();
+              onMobileClose();
+            }}
+            className="flex items-center gap-1 mt-3 px-3 py-2 text-sm font-semibold text-ocean bg-ocean/5 hover:bg-ocean/10 border border-ocean/15 rounded-lg transition-all duration-200"
+          >
+            <span className="material-symbols-outlined text-[18px]">home</span>
+            Back to Home
+          </button>
+        )}
       </div>
 
       {/* Step Navigation */}
