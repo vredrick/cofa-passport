@@ -67,74 +67,72 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
       </nav>
 
       {/* Mobile navbar */}
-      <nav className="fixed top-4 left-4 right-4 z-40 flex md:hidden items-center justify-between px-3 py-2.5 rounded-full border border-ocean/15 bg-white/80 backdrop-blur-xl" style={{ boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)' }}>
-        {/* Left: Start button */}
-        <button
-          type="button"
-          onClick={onStartApplication}
-          className="px-4 py-1.5 bg-ocean text-white text-xs font-bold rounded-full hover:bg-ocean-light transition-colors whitespace-nowrap shrink-0"
-        >
-          Start
-        </button>
-
-        {/* Center: Logo */}
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`${basePath}/cofa-supports-logo.svg`}
-            alt="COFA Supports logo"
-            width={20}
-            height={20}
-          />
-          <span className="font-bold text-ink text-sm tracking-tight">COFA</span>
-        </div>
-
-        {/* Right: Hamburger */}
+      <nav className="fixed top-4 left-4 right-4 z-40 flex md:hidden items-center px-2 py-2 rounded-2xl border border-ocean/15 bg-white/90 backdrop-blur-xl" style={{ boxShadow: '0 12px 32px -8px rgba(0,0,0,0.12)' }}>
+        {/* Left: Hamburger */}
         <button
           type="button"
           onClick={() => setMenuOpen(!menuOpen)}
-          className="p-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-ocean/5 transition-colors shrink-0"
           aria-label="Menu"
         >
           <span className="material-symbols-outlined text-[22px] text-ink">
             {menuOpen ? 'close' : 'menu'}
           </span>
         </button>
+
+        {/* Center: Logo + name */}
+        <div className="flex-1 flex items-center justify-center gap-1.5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`${basePath}/cofa-supports-logo.svg`}
+            alt="COFA Supports logo"
+            width={18}
+            height={18}
+          />
+          <span className="font-bold text-ink text-xs tracking-tight">COFA Supports</span>
+        </div>
+
+        {/* Right: Start button */}
+        <button
+          type="button"
+          onClick={onStartApplication}
+          className="px-4 py-1.5 bg-ocean text-white text-xs font-bold rounded-xl hover:bg-ocean-light transition-colors whitespace-nowrap shrink-0"
+        >
+          Start
+        </button>
       </nav>
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <div className="fixed top-[72px] right-4 z-40 md:hidden bg-white rounded-2xl border border-ocean/15 shadow-smooth p-2 min-w-[180px] animate-slide-in-right" style={{ boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)' }}>
+        <div className="fixed inset-0 z-30 md:hidden" onClick={() => setMenuOpen(false)} />
+      )}
+      {menuOpen && (
+        <div className="fixed top-[72px] left-4 right-4 z-40 md:hidden bg-white/95 backdrop-blur-xl rounded-2xl border border-ocean/15 p-1.5" style={{ boxShadow: '0 12px 32px -8px rgba(0,0,0,0.12)' }}>
           <button
             type="button"
             onClick={() => { setMenuOpen(false); setDetailsOpen(true); }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-ink hover:bg-ocean/5 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left text-sm font-medium text-ink hover:bg-ocean/5 transition-colors"
           >
-            <span className="material-symbols-outlined text-[20px] text-ocean/60">checklist</span>
-            Requirements
+            <span className="material-symbols-outlined text-[20px] text-ocean">checklist</span>
+            Requirements &amp; Fees
           </button>
           <button
             type="button"
             onClick={() => { setMenuOpen(false); setI94Open(true); }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-ink hover:bg-ocean/5 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left text-sm font-medium text-ink hover:bg-ocean/5 transition-colors"
           >
-            <span className="material-symbols-outlined text-[20px] text-ocean/60">flight_land</span>
-            I-94 Record
+            <span className="material-symbols-outlined text-[20px] text-ocean">flight_land</span>
+            I-94 Record Lookup
           </button>
           <a
             href="#security"
             onClick={() => setMenuOpen(false)}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-ink hover:bg-ocean/5 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left text-sm font-medium text-ink hover:bg-ocean/5 transition-colors"
           >
-            <span className="material-symbols-outlined text-[20px] text-ocean/60">lock</span>
-            Privacy
+            <span className="material-symbols-outlined text-[20px] text-ocean">lock</span>
+            Privacy &amp; Security
           </a>
         </div>
-      )}
-
-      {/* Mobile menu backdrop */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-30 md:hidden" onClick={() => setMenuOpen(false)} />
       )}
 
       {/* ─── Section 2: Hero ─── */}
