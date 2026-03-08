@@ -22,7 +22,7 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
 
       {/* ─── Section 1: Floating Pill Navbar ─── */}
       {/* Desktop navbar */}
-      <nav className="nav-pill hidden md:flex">
+      <nav className="nav-pill hidden md:flex md:items-center">
         <div className="flex items-center gap-2 shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
