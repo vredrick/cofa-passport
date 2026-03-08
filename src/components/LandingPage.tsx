@@ -312,7 +312,97 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ─── Section 6: Footer ─── */}
+      {/* ─── Section 6: I-94 Resources ─── */}
+      <section className="py-20 sm:py-28 bg-surface">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8">
+          <div className="mb-12">
+            <span className="mono-label">Travel Records</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-ink mt-3 tracking-tight">
+              Retrieve your <span className="font-serif italic text-ocean">I-94.</span>
+            </h2>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-ocean/10 overflow-hidden shadow-card">
+            {/* Card header */}
+            <div className="bg-ocean-deep px-6 sm:px-8 py-5 flex items-center gap-3">
+              <span className="material-symbols-outlined text-[24px] text-white/80">flight_land</span>
+              <div>
+                <h3 className="font-bold text-lg text-white">I-94 Arrival/Departure Record</h3>
+                <p className="font-mono text-[11px] text-white/50 mt-0.5 uppercase tracking-wide">U.S. Customs &amp; Border Protection</p>
+              </div>
+            </div>
+
+            {/* Card body */}
+            <div className="p-6 sm:p-8 space-y-6">
+              <p className="text-muted leading-relaxed">
+                Your I-94 is proof of your legal admission into the United States. As a COFA citizen,
+                your I-94 records are available <strong className="text-ink">indefinitely</strong> — not
+                just the standard 10 years. You can retrieve and print your record at any time from
+                the official CBP website.
+              </p>
+
+              {/* Important callout */}
+              <div className="flex gap-3 bg-gold/10 border border-gold/20 rounded-xl p-4">
+                <span className="material-symbols-outlined text-[20px] text-gold shrink-0 mt-0.5">warning</span>
+                <div className="text-sm text-ink leading-relaxed">
+                  <strong>Renewed your passport?</strong> Your I-94 is linked to the passport number
+                  you used when you last entered the U.S. — not your new one. If you&apos;ve since
+                  renewed your passport and received a new number, use your <strong>old passport
+                  number</strong> to retrieve your I-94 record.
+                </div>
+              </div>
+
+              {/* What you'll need */}
+              <div>
+                <h4 className="font-bold text-sm text-ink mb-3">What you&apos;ll need</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {[
+                    { icon: 'badge', label: 'First & last name (as on passport)' },
+                    { icon: 'cake', label: 'Date of birth' },
+                    { icon: 'menu_book', label: 'Passport number used at entry' },
+                    { icon: 'flag', label: 'Country of passport issuance' },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-2.5 text-sm text-muted">
+                      <span className="material-symbols-outlined text-[18px] text-ocean/60">{item.icon}</span>
+                      {item.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <a
+                  href="https://i94.cbp.dhs.gov/search/recent-search"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-ocean text-white font-bold rounded-xl hover:bg-ocean-light transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                  Retrieve Your I-94
+                </a>
+                <a
+                  href="https://i94.cbp.dhs.gov/search/history-search"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-ocean font-bold rounded-xl border border-ocean/15 hover:border-ocean/30 hover:shadow-md transition-all"
+                >
+                  <span className="material-symbols-outlined text-[18px]">history</span>
+                  View Travel History
+                </a>
+              </div>
+
+              {/* CBP One tip */}
+              <p className="text-xs text-muted/60 leading-relaxed">
+                You can also retrieve your I-94 using the <strong>CBP One</strong> mobile app,
+                which lets you scan your passport to auto-fill the lookup form.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Section 7: Footer ─── */}
       <footer className="bg-ocean-deep text-white py-16 sm:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-8">
           {/* Logo + brand text */}
