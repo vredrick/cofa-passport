@@ -13,6 +13,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 export default function LandingPage({ onStartApplication }: LandingPageProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [i94Open, setI94Open] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -20,7 +21,8 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
       <div className="noise-overlay" />
 
       {/* ─── Section 1: Floating Pill Navbar ─── */}
-      <nav className="nav-pill">
+      {/* Desktop navbar */}
+      <nav className="nav-pill hidden md:flex">
         <div className="flex items-center gap-2 shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -29,27 +31,27 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
             width={22}
             height={22}
           />
-          <span className="hidden sm:inline font-bold text-ink text-sm tracking-tight">COFA Supports</span>
+          <span className="font-bold text-ink text-sm tracking-tight">COFA Supports</span>
         </div>
 
-        <div className="flex items-center gap-0.5 sm:gap-1 ml-auto md:ml-4">
+        <div className="flex items-center gap-1 ml-4">
           <button
             type="button"
             onClick={() => setDetailsOpen(true)}
-            className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+            className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted hover:text-ocean px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
           >
             Requirements
           </button>
           <button
             type="button"
             onClick={() => setI94Open(true)}
-            className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+            className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted hover:text-ocean px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
           >
             I-94
           </button>
           <a
             href="#security"
-            className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+            className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted hover:text-ocean px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
           >
             Privacy
           </a>
@@ -58,11 +60,82 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
         <button
           type="button"
           onClick={onStartApplication}
-          className="ml-2 md:ml-4 px-4 sm:px-5 py-2 bg-ocean text-white text-xs sm:text-sm font-bold rounded-full hover:bg-ocean-light transition-colors whitespace-nowrap shrink-0"
+          className="ml-4 px-5 py-2 bg-ocean text-white text-sm font-bold rounded-full hover:bg-ocean-light transition-colors whitespace-nowrap shrink-0"
         >
           Start Application
         </button>
       </nav>
+
+      {/* Mobile navbar */}
+      <nav className="fixed top-4 left-4 right-4 z-40 flex md:hidden items-center justify-between px-3 py-2.5 rounded-full border border-ocean/15 bg-white/80 backdrop-blur-xl" style={{ boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)' }}>
+        {/* Left: Start button */}
+        <button
+          type="button"
+          onClick={onStartApplication}
+          className="px-4 py-1.5 bg-ocean text-white text-xs font-bold rounded-full hover:bg-ocean-light transition-colors whitespace-nowrap shrink-0"
+        >
+          Start
+        </button>
+
+        {/* Center: Logo */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`${basePath}/cofa-supports-logo.svg`}
+            alt="COFA Supports logo"
+            width={20}
+            height={20}
+          />
+          <span className="font-bold text-ink text-sm tracking-tight">COFA</span>
+        </div>
+
+        {/* Right: Hamburger */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="p-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+          aria-label="Menu"
+        >
+          <span className="material-symbols-outlined text-[22px] text-ink">
+            {menuOpen ? 'close' : 'menu'}
+          </span>
+        </button>
+      </nav>
+
+      {/* Mobile dropdown menu */}
+      {menuOpen && (
+        <div className="fixed top-[72px] right-4 z-40 md:hidden bg-white rounded-2xl border border-ocean/15 shadow-smooth p-2 min-w-[180px] animate-slide-in-right" style={{ boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)' }}>
+          <button
+            type="button"
+            onClick={() => { setMenuOpen(false); setDetailsOpen(true); }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-ink hover:bg-ocean/5 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px] text-ocean/60">checklist</span>
+            Requirements
+          </button>
+          <button
+            type="button"
+            onClick={() => { setMenuOpen(false); setI94Open(true); }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-ink hover:bg-ocean/5 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px] text-ocean/60">flight_land</span>
+            I-94 Record
+          </button>
+          <a
+            href="#security"
+            onClick={() => setMenuOpen(false)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-ink hover:bg-ocean/5 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px] text-ocean/60">lock</span>
+            Privacy
+          </a>
+        </div>
+      )}
+
+      {/* Mobile menu backdrop */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-30 md:hidden" onClick={() => setMenuOpen(false)} />
+      )}
 
       {/* ─── Section 2: Hero ─── */}
       <section className="relative min-h-screen flex items-center justify-center bg-surface overflow-hidden">
