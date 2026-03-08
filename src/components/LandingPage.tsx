@@ -36,13 +36,19 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
             onClick={() => setDetailsOpen(true)}
             className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
           >
-            Info
+            Requirements
           </button>
+          <a
+            href="#i94"
+            className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
+          >
+            I-94
+          </a>
           <a
             href="#security"
             className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
           >
-            Security
+            Privacy
           </a>
         </div>
 
@@ -51,7 +57,7 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
           onClick={onStartApplication}
           className="ml-2 md:ml-4 px-4 sm:px-5 py-2 bg-ocean text-white text-xs sm:text-sm font-bold rounded-full hover:bg-ocean-light transition-colors whitespace-nowrap shrink-0"
         >
-          Start Now
+          Start Application
         </button>
       </nav>
 
@@ -313,7 +319,7 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
       </section>
 
       {/* ─── Section 6: I-94 Resources ─── */}
-      <section className="py-20 sm:py-28 bg-surface">
+      <section id="i94" className="py-20 sm:py-28 bg-surface scroll-mt-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-8">
           <div className="mb-12">
             <span className="mono-label">Travel Records</span>
@@ -343,12 +349,13 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
 
               {/* Important callout */}
               <div className="flex gap-3 bg-gold/10 border border-gold/20 rounded-xl p-4">
-                <span className="material-symbols-outlined text-[20px] text-gold shrink-0 mt-0.5">warning</span>
+                <span className="material-symbols-outlined text-[20px] text-gold shrink-0 mt-0.5">info</span>
                 <div className="text-sm text-ink leading-relaxed">
-                  <strong>Renewed your passport?</strong> Your I-94 is linked to the passport number
-                  you used when you last entered the U.S. — not your new one. If you&apos;ve since
-                  renewed your passport and received a new number, use your <strong>old passport
-                  number</strong> to retrieve your I-94 record.
+                  <strong>Which passport number do I use?</strong> Your I-94 is tied to the passport
+                  you last used to enter the United States. If you&apos;ve renewed your passport since
+                  your last trip, you&apos;ll need to enter the <strong>previous passport number</strong> you
+                  traveled with — not the new one. If your current passport is the one you last
+                  entered with, use that number.
                 </div>
               </div>
 
@@ -359,7 +366,7 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
                   {[
                     { icon: 'badge', label: 'First & last name (as on passport)' },
                     { icon: 'cake', label: 'Date of birth' },
-                    { icon: 'menu_book', label: 'Passport number used at entry' },
+                    { icon: 'menu_book', label: 'Passport number last used to enter the U.S.' },
                     { icon: 'flag', label: 'Country of passport issuance' },
                   ].map((item) => (
                     <div key={item.label} className="flex items-center gap-2.5 text-sm text-muted">
