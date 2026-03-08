@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import DetailsModal from '@/components/DetailsModal';
+import I94Modal from '@/components/I94Modal';
 
 interface LandingPageProps {
   onStartApplication: () => void;
@@ -11,6 +12,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export default function LandingPage({ onStartApplication }: LandingPageProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [i94Open, setI94Open] = useState(false);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -38,12 +40,13 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
           >
             Requirements
           </button>
-          <a
-            href="#i94"
+          <button
+            type="button"
+            onClick={() => setI94Open(true)}
             className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
           >
             I-94
-          </a>
+          </button>
           <a
             href="#security"
             className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.08em] sm:tracking-[0.15em] text-muted hover:text-ocean px-2 sm:px-3 py-1.5 rounded-full hover:bg-ocean/5 transition-colors"
@@ -318,98 +321,7 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ─── Section 6: I-94 Resources ─── */}
-      <section id="i94" className="py-20 sm:py-28 bg-surface scroll-mt-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-8">
-          <div className="mb-12">
-            <span className="mono-label">Travel Records</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-ink mt-3 tracking-tight">
-              Retrieve your <span className="font-serif italic text-ocean">I-94.</span>
-            </h2>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-ocean/10 overflow-hidden shadow-card">
-            {/* Card header */}
-            <div className="bg-ocean-deep px-6 sm:px-8 py-5 flex items-center gap-3">
-              <span className="material-symbols-outlined text-[24px] text-white/80">flight_land</span>
-              <div>
-                <h3 className="font-bold text-lg text-white">I-94 Arrival/Departure Record</h3>
-                <p className="font-mono text-[11px] text-white/50 mt-0.5 uppercase tracking-wide">U.S. Customs &amp; Border Protection</p>
-              </div>
-            </div>
-
-            {/* Card body */}
-            <div className="p-6 sm:p-8 space-y-6">
-              <p className="text-muted leading-relaxed">
-                Your I-94 is proof of your legal admission into the United States. As a COFA citizen,
-                your I-94 records are available <strong className="text-ink">indefinitely</strong> — not
-                just the standard 10 years. You can retrieve and print your record at any time from
-                the official CBP website.
-              </p>
-
-              {/* Important callout */}
-              <div className="flex gap-3 bg-gold/10 border border-gold/20 rounded-xl p-4">
-                <span className="material-symbols-outlined text-[20px] text-gold shrink-0 mt-0.5">info</span>
-                <div className="text-sm text-ink leading-relaxed">
-                  <strong>Which passport number do I use?</strong> Your I-94 is tied to the passport
-                  you last used to enter the United States. If you&apos;ve renewed your passport since
-                  your last trip, you&apos;ll need to enter the <strong>previous passport number</strong> you
-                  traveled with — not the new one. If your current passport is the one you last
-                  entered with, use that number.
-                </div>
-              </div>
-
-              {/* What you'll need */}
-              <div>
-                <h4 className="font-bold text-sm text-ink mb-3">What you&apos;ll need</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {[
-                    { icon: 'badge', label: 'First & last name (as on passport)' },
-                    { icon: 'cake', label: 'Date of birth' },
-                    { icon: 'menu_book', label: 'Passport number last used to enter the U.S.' },
-                    { icon: 'flag', label: 'Country of passport issuance' },
-                  ].map((item) => (
-                    <div key={item.label} className="flex items-center gap-2.5 text-sm text-muted">
-                      <span className="material-symbols-outlined text-[18px] text-ocean/60">{item.icon}</span>
-                      {item.label}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <a
-                  href="https://i94.cbp.dhs.gov/search/recent-search"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-ocean text-white font-bold rounded-xl hover:bg-ocean-light transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[18px]">open_in_new</span>
-                  Retrieve Your I-94
-                </a>
-                <a
-                  href="https://i94.cbp.dhs.gov/search/history-search"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-ocean font-bold rounded-xl border border-ocean/15 hover:border-ocean/30 hover:shadow-md transition-all"
-                >
-                  <span className="material-symbols-outlined text-[18px]">history</span>
-                  View Travel History
-                </a>
-              </div>
-
-              {/* CBP One tip */}
-              <p className="text-xs text-muted/60 leading-relaxed">
-                You can also retrieve your I-94 using the <strong>CBP One</strong> mobile app,
-                which lets you scan your passport to auto-fill the lookup form.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Section 7: Footer ─── */}
+      {/* ─── Section 6: Footer ─── */}
       <footer className="bg-ocean-deep text-white py-16 sm:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-8">
           {/* Logo + brand text */}
@@ -482,6 +394,10 @@ export default function LandingPage({ onStartApplication }: LandingPageProps) {
           setDetailsOpen(false);
           onStartApplication();
         }}
+      />
+      <I94Modal
+        open={i94Open}
+        onClose={() => setI94Open(false)}
       />
     </div>
   );
